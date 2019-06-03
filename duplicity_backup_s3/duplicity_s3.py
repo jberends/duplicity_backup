@@ -34,14 +34,14 @@ class DuplicityS3(object):
     def __init__(self, **options):
         self._config_file = Path(Path.cwd() / options.get("config"))
         self.read_config(path=self._config_file)
-
+        self.verbose = options.get('verbose', False)
         # in case of verbosity be more than 3 verbose
-        verbosity = (
+        duplicity_verbosity = (
             DUPLICITY_VERBOSITY + 1 if options.get("verbose") else DUPLICITY_VERBOSITY
         )
 
         self._args = [
-            "-v{}".format(verbosity),
+            "-v{}".format(duplicity_verbosity),
             "--full-if-older-than",
             str(FULL_IF_OLDER_THAN),
         ] + DUPLICITY_DEFAULT_ARGS
@@ -97,7 +97,9 @@ class DuplicityS3(object):
             args.append("--dry-run")
 
         command = [duplicity_cmd(), action, *args, source, target]
-        pprint([command, runtime_env])
+        if self.verbose:
+            print('command used:')
+            pprint(command)
 
         # execute duplicity command
         self.last_results = subprocess.run(command, shell=NEED_SUBPROCESS_SHELL, env=runtime_env)
