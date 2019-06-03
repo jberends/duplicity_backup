@@ -26,7 +26,9 @@ UNKNOWN_OPTIONS = {"ignore_unknown_options": True}.update(CONTEXT_SETTINGS)
     envvar="DUPLICITY_BACKUP_S3_CONFIG",
     default=CONFIG_FILEPATH,
 )
-@click.option('--init', is_flag=True, help="Initialise a empty configuration YAML", default=False)
+@click.option(
+    "--init", is_flag=True, help="Initialise a empty configuration YAML", default=False
+)
 @click.option(
     "--dry-run", envvar="DRY_RUN", is_flag=True, help="Dry run", default=False
 )
@@ -34,20 +36,28 @@ UNKNOWN_OPTIONS = {"ignore_unknown_options": True}.update(CONTEXT_SETTINGS)
 def main(**options):
     """Console script for duplicity_backup_s3."""
 
-    if options.get('init'):
+    if options.get("init"):
         # do initialisation
-        with options.get('config').open('w') as fd:
-            echo_info("Initialising an empty config file in: '{}'".format(Path.cwd() / options.get("config")))
+        config = Path(Path.cwd() / options.get("config"))
+        with config.open("w") as fd:
+            echo_info("Initialising an empty config file in: '{}'".format(config))
             fd.write(yaml.dump(EMPTY_CONFIGFILE))
-
+        if config.exists():
+            sys.exit(0)
+        else:
+            echo_failure(
+                "Config file does not exist in '{}', please provide.".format(
+                    options.get("config")
+                )
+            )
+            sys.exit(2)
 
     if options.get("config") is not None:
         config = Path(Path.cwd() / options.get("config"))
         if not config.exists():
             echo_failure(
-                "Config file does not exist in '{}', please provide.".format(
-                    options.get("config")
-                )
+                "Config file does not exist in '{}', please provide or "
+                "create an empty one using `--init`.".format(options.get("config"))
             )
             sys.exit(2)
 
