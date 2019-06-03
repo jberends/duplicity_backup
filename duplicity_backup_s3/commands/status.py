@@ -9,7 +9,7 @@ from duplicity_backup_s3.utils import check_config_file
 @click.option(
     "-c",
     "--config",
-    help="Config file location",
+    help="Config file location. Alternatively set the environment variable: `DUPLICITY_BACKUP_S3_CONFIG`.",
     envvar="DUPLICITY_BACKUP_S3_CONFIG",
     default=CONFIG_FILEPATH,
 )
