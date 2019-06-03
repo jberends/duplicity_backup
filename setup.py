@@ -11,7 +11,7 @@ with open("README.md") as readme_file:
 with open("CHANGELOG.md") as history_file:
     history = history_file.read()
 
-requirements = ["Click>=6.0", "PyYAML"]
+requirements = ["Click>=6.0", "PyYAML", "envparse"]
 
 setup_requirements = []
 
