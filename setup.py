@@ -28,6 +28,7 @@ test_requirements = [
 ]
 
 setup(
+    python_requires='>=3.5',
     author="Jochem Berends",
     author_email="jochem.berends@ke-works.com",
     classifiers=[
