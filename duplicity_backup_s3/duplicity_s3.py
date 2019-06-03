@@ -32,7 +32,7 @@ from duplicity_backup_s3.defaults import (
 
 class DuplicityS3(object):
     def __init__(self, **options):
-        self._config_file = options.get("config")
+        self._config_file = Path(Path.cwd() / options.get("config"))
         self.read_config(path=self._config_file)
 
         # in case of verbosity be more than 3 verbose
