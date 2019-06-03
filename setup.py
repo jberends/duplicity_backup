@@ -43,7 +43,8 @@ setup(
     ],
     description="Duplicity backup to S3 for production servers using simple toml file.",
     entry_points={
-        "console_scripts": ["duplicity_backup_s3 = duplicity_backup_s3.cli:main"]
+        "console_scripts": (
+            "duplicity_backup_s3 = duplicity_backup_s3.cli:duplicity_backup_s3")
     },
     install_requires=requirements,
     license="Apache Software License 2.0",

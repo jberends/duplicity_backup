@@ -23,18 +23,15 @@ class AliasedGroup(click.Group):
 
 @click.group(cls=AliasedGroup, context_settings=CONTEXT_SETTINGS)
 @click.version_option()
-def main(**options):
+def duplicity_backup_s3():
     pass
 
 
-main.add_command(incr)
-main.add_command(verify)
-# main.add_command(restore)
-main.add_command(init)
-main.add_command(cleanup)
-main.add_command(status)
-main.add_command(list_files)
-main.add_command(remove)
-
-if __name__ == "__main__":
-    sys.exit(main())  # pragma: no cover
+duplicity_backup_s3.add_command(incr)
+duplicity_backup_s3.add_command(verify)
+# duplicity_backup_s3.add_command(restore)
+duplicity_backup_s3.add_command(init)
+duplicity_backup_s3.add_command(cleanup)
+duplicity_backup_s3.add_command(status)
+duplicity_backup_s3.add_command(list_files)
+duplicity_backup_s3.add_command(remove)

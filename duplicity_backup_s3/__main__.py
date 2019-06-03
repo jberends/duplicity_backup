@@ -1,6 +1,6 @@
 #!/bin/env python
 import sys
 
-from .cli import main
+from .cli import duplicity_backup_s3
 
-sys.exit(main())
+sys.exit(duplicity_backup_s3())
