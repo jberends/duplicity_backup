@@ -13,7 +13,7 @@ with open("CHANGELOG.md") as history_file:
 
 from duplicity_backup_s3 import __version__
 
-requirements = ["Click>=6.0", "PyYAML", "envparse"]
+requirements = ["Click>=6.0", "PyYAML", "envparse", "cerberus"]
 
 setup_requirements = []
 
@@ -43,7 +43,7 @@ setup(
     ],
     description="Duplicity backup to S3 for production servers using simple toml file.",
     entry_points={
-        "console_scripts": ["duplicity_backup_s3=duplicity_backup_s3.__main__:main"]
+        "console_scripts": ["duplicity_backup_s3 = duplicity_backup_s3.cli:main"]
     },
     install_requires=requirements,
     license="Apache Software License 2.0",
@@ -56,7 +56,7 @@ setup(
     setup_requires=setup_requirements,
     test_suite="tests",
     tests_require=test_requirements,
-    url="https://github.com/jberends/duplicity_s3",
+    url="https://git.ke-works.net/kew/duplicity_backup.git",
     version=__version__,
     zip_safe=False,
 )

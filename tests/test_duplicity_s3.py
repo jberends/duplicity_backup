@@ -7,6 +7,7 @@ from unittest import TestCase
 
 from click.testing import CliRunner
 
+import duplicity_backup_s3.commands.incr
 from duplicity_backup_s3 import cli, __version__
 
 
@@ -17,12 +18,11 @@ class TestDuplicity_s3(TestCase):
         """Set up test fixtures, if any."""
         self.runner = CliRunner(env=dict(DRY_RUN=1))
 
-
     def tearDown(self):
         """Tear down test fixtures, if any."""
 
     def test_command_line_interface_help(self):
-        result = self.runner.invoke(cli.main, ["--help"])
+        result = self.runner.invoke(duplicity_backup_s3.commands.incr.duplicity_backup_s3, ["--help"])
         self.assertEqual(result.exit_code, 0)
         self.assertIn(
             "--help",
@@ -32,7 +32,7 @@ class TestDuplicity_s3(TestCase):
         self.assertIn("Show this message and exit.", result.output)
 
     def test_command_line_interface_version(self):
-        result = self.runner.invoke(cli.main, ["--version"])
+        result = self.runner.invoke(duplicity_backup_s3.commands.incr.duplicity_backup_s3, ["--version"])
         self.assertEqual(
             result.exit_code,
             0,
@@ -41,7 +41,7 @@ class TestDuplicity_s3(TestCase):
         self.assertIn(__version__, result.output)
 
     def test_no_config(self):
-        result = self.runner.invoke(cli.main, "--config foobar")
+        result = self.runner.invoke(duplicity_backup_s3.commands.incr.duplicity_backup_s3, "--config foobar")
         self.assertEqual(
             result.exit_code,
             2,
@@ -52,7 +52,7 @@ class TestDuplicity_s3(TestCase):
     def test_with_config(self):
 
         result = self.runner.invoke(
-            cli.main, "--config='duplicity_backup_s3.tests.yaml' --dry-run"
+            duplicity_backup_s3.commands.incr.duplicity_backup_s3, "--config='duplicity_backup_s3.tests.yaml' --dry-run"
         )
         self.assertEqual(
             result.exit_code,

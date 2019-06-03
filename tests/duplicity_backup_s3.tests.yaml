@@ -1,6 +1,6 @@
 aws:
-  aws_access_key_id: foobar_aws_key_id
-  aws_secret_access_key: foobar_aws_access_key
+  AWS_ACCESS_KEY_ID: foobar_aws_key_id
+  AWS_SECRET_ACCESS_KEY: foobar_aws_access_key
 backuproot: /home
 excludes:
   - .config

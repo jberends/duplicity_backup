@@ -3,5 +3,5 @@
 """Top-level package for Duplicity Backup to S3."""
 
 __author__ = """Jochem Berends"""
-__email__ = 'jochem.berends@ke-works.com'
-__version__ = '0.1.1'
+__email__ = "jochem.berends@ke-works.com"
+__version__ = "0.2.0"

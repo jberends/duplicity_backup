@@ -6,7 +6,10 @@ CONFIG_FILENAME = "duplicity_backup_s3.yaml"
 CONFIG_FILEPATH = Path.cwd() / CONFIG_FILENAME
 
 FULL_IF_OLDER_THAN = "7D"
-DUPLICITY_DEFAULT_ARGS = [
+DUPLICITY_BASIC_ARGS = [
+
+]
+DUPLICITY_BACKUP_ARGS = [
     "--s3-european-buckets",
     "--s3-use-new-style",
     "--asynchronous-upload",
@@ -14,6 +17,8 @@ DUPLICITY_DEFAULT_ARGS = [
     "--no-encryption",
 ]
 DUPLICITY_VERBOSITY = 3
+DUPLICITY_MORE_VERBOSITY = DUPLICITY_VERBOSITY + 1
+DUPLICITY_DEBUG_VERBOSITY = 5
 
 __platform = platform.system()
 ON_LINUX = os.name == "posix" or __platform == "Linux"
@@ -30,3 +35,5 @@ EMPTY_CONFIGFILE = dict(
     excludes=["/full/path/to_exclude", "/another/path/to_exclude"],
     remote=dict(bucket="<bucketname>", path="<path>"),
 )
+CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"], "max_content_width": 88}
+UNKNOWN_OPTIONS = {"ignore_unknown_options": True}.update(CONTEXT_SETTINGS)
