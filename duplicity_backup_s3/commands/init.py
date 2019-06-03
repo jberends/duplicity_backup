@@ -27,7 +27,9 @@ from duplicity_backup_s3.utils import echo_info, echo_failure, check_config_file
 def init(**options):
     """Initialise an empty configuration yaml file."""
 
-    config = check_config_file(options.get("config"), exit=False, verbose=options.get('verbose'))
+    config = check_config_file(
+        options.get("config"), exit=False, verbose=options.get("verbose")
+    )
     if config.exists() and not click.confirm(
         "Do you want to override the current '{}'".format(options.get("config"))
     ):

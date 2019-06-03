@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import subprocess
+import sys
 from pathlib import Path
 from pprint import pprint
 from typing import Dict
@@ -15,7 +16,9 @@ from duplicity_backup_s3.defaults import (
     NEED_SUBPROCESS_SHELL,
     DUPLICITY_MORE_VERBOSITY,
     DUPLICITY_BASIC_ARGS,
-    DUPLICITY_DEBUG_VERBOSITY)
+    DUPLICITY_DEBUG_VERBOSITY,
+)
+from duplicity_backup_s3.utils import echo_info, echo_failure
 
 
 # /bin/duplicity
@@ -32,8 +35,6 @@ from duplicity_backup_s3.defaults import (
 #   /opt/ke-chain/   # src
 #   s3+http://kew-prod-backup-target/kec-prod23/  # target
 
-from duplicity_backup_s3.utils import echo_info
-
 
 class DuplicityS3(object):
     def __init__(self, **options):
@@ -45,7 +46,7 @@ class DuplicityS3(object):
         duplicity_verbosity = (
             DUPLICITY_MORE_VERBOSITY if options.get("verbose") else DUPLICITY_VERBOSITY
         )
-        if options.get('debug'):
+        if options.get("debug"):
             duplicity_verbosity = DUPLICITY_DEBUG_VERBOSITY
 
         self._args = ["-v{}".format(duplicity_verbosity)] + DUPLICITY_BASIC_ARGS
@@ -83,6 +84,45 @@ class DuplicityS3(object):
                 AWS_SECRET_ACCESS_KEY=self.env("AWS_SECRET_ACCESS_KEY", default=""),
             )
 
+    def _execute(self, *cmd_args, runtime_env=None):
+        """Execute the duplicity command."""
+
+        command = [self._duplicity_cmd(), *cmd_args]
+
+        if self.verbose:
+            print("command used:")
+            print([*cmd_args])
+            print("environment:")
+            pprint(
+                [
+                    "{} = {}".format(k, v)
+                    for k, v in os.environ.items()
+                    if ("SECRET" not in k) and (("AWS" in k) or ("DUPLICITY" in k))
+                ]
+            )
+
+        self.last_results = subprocess.run(
+            command, shell=NEED_SUBPROCESS_SHELL, env=runtime_env
+        )
+
+        return self.last_results.returncode
+
+    def _duplicity_cmd(self, search_path=None):
+        """
+        Check if duplicity is installed and return version.
+
+        :param search_path: path to search for duplicity if not in PATH. defaults None.
+        :return: path to duplicity
+        """
+        from shutil import which
+
+        duplicity_cmd = which("duplicity", path=search_path)
+
+        if not duplicity_cmd:
+            return OSError("Could not find `duplicity` in path, is it installed?")
+
+        return duplicity_cmd
+
     def get_cludes(self, includes=None, excludes=None):
         """
         Get includes or excludes command arguments.
@@ -116,7 +156,7 @@ class DuplicityS3(object):
             )
         )
         runtime_env = self.get_aws_secrets()
-        action = "inc"
+        action = "incr"
 
         if self.dry_run:
             args.append("--dry-run")
@@ -155,49 +195,136 @@ class DuplicityS3(object):
             if self.options.get("file") is not None:
                 args.extend(["--file-to-restore", self.options.get("file")])
 
+            if self.options.get("time") is not None:
+                args.extend(["--time", self.options.get("time")])
+
             if self.verbose:
                 echo_info("verifying backup in directory: {}".format(target))
 
             return self._execute(action, *args, source, target, runtime_env=runtime_env)
 
-    def _execute(self, *cmd_args, runtime_env=None):
-        """Execute the duplicity command."""
+    def do_cleanup(self):
+        """
+        Cleanup of dirty remote.
 
-        command = [self._duplicity_cmd(), *cmd_args]
+        From the duplicity manpage:
+        cleanup [--force] [--extra-clean] <url>
+            Delete the extraneous duplicity files on the given backend. Non-duplicity files, or files in complete
+            data sets will not be deleted. This should only be necessary after a duplicity session fails or is
+            aborted prematurely. Note that --force will be needed to delete the files instead of just listing them.
 
-        self.last_results = subprocess.run(
-            command, shell=NEED_SUBPROCESS_SHELL, env=runtime_env
-        )
+        :return: returncode
+        """
+        target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))
+        args = self._args
+        runtime_env = self.get_aws_secrets()
+        action = "cleanup"
+
+        if self.dry_run:
+            args.append("--dry-run")
+
+        if self.options.get("force"):
+            args.append("--force")
 
         if self.verbose:
-            print("command used:")
-            pprint([*cmd_args])
-            print("environment:")
-            pprint(
-                [
-                    "{} = {}".format(k, v)
-                    for k, v in os.environ.items()
-                    if ("SECRET" not in k) and (("AWS" in k) or ("DUPLICITY" in k))
-                ]
-            )
+            echo_info("Cleanup the backup in target: '{}'".format(target))
 
-        return self.last_results.returncode
+        return self._execute(action, *args, target, runtime_env=runtime_env)
 
-    def _duplicity_cmd(self, search_path=None):
+    def do_collection_status(self):
         """
-        Check if duplicity is installed and return version.
+        Collection status of the backup.
 
-        :param search_path: path to search for duplicity if not in PATH. defaults None.
-        :return:
+        From the docs:
+        collection-status <url>
+            Summarize the status of the backup repository by printing the chains and sets found, and the
+            number of volumes in each.
+
+        :return: returncode
         """
-        from shutil import which
+        target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))
+        action = "collection-status"
 
-        duplicity_cmd = which("duplicity", path=search_path)
+        if self.verbose:
+            echo_info("Collection status of the backup in target: '{}'".format(target))
 
-        if not duplicity_cmd:
-            return OSError("Could not find `duplicity` in path, is it installed?")
+        return self._execute(
+            action, *self._args, target, runtime_env=self.get_aws_secrets()
+        )
 
-        return duplicity_cmd
+    def do_list_current_files(self):
+        """
+        List current files included in the backup.
+
+        from the docs:
+        list-current-files [--time <time>] <url>
+            Lists the files contained in the most current backup or backup at time. The information will be
+            extracted from the signature files, not the archive data itself. Thus the whole archive does not
+            have to be downloaded, but on the other hand if the archive has been deleted or corrupted, this
+            command will not detect it.
+
+        :return: returncode
+        """
+        target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))
+        args = self._args
+        action = "list-current-files"
+
+        if self.options.get("time") is not None:
+            args.extend(["--time", self.options.get("time")])
+
+        if self.verbose:
+            echo_info("Collection status of the backup in target: '{}'".format(target))
+
+        return self._execute(action, *args, target, runtime_env=self.get_aws_secrets())
+
+    def do_remove_older(self):
+        """Remove older backup sets.
+
+        From the docs:
+        remove-older-than <time> [--force] <url>
+            Delete all backup sets older than the given time. Old backup sets will not be deleted if backup sets
+            newer than time depend on them. See the TIME FORMATS section for more information. Note, this action
+            cannot be combined with backup or other actions, such as cleanup. Note also that --force will be
+            needed to delete the files instead of just listing them.
+
+        remove-all-but-n-full <count> [--force] <url>
+            Delete all backups sets that are older than the count:th last full backup (in other words, keep the
+            last count full backups and associated incremental sets). count must be larger than zero. A value
+            of 1 means that only the single most recent backup chain will be kept. Note that --force will be
+            needed to delete the files instead of just listing them.
+
+        remove-all-inc-of-but-n-full <count> [--force] <url>
+            Delete incremental sets of all backups sets that are older than the count:th last full backup (in
+            other words, keep only old full backups and not their increments). count must be larger than zero.
+            A value of 1 means that only the single most recent backup chain will be kept intact.
+            Note that --force will be needed to delete the files instead of just listing them.
+        """
+        target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))
+        args = self._args
+        action = None
+
+        if self.options.get("time") is not None:
+            action = ["remove-older-than", self.options.get("time")]
+        if self.options.get("all_but_n_full") is not None:
+            action = ["remove-all-but-n-full", str(self.options.get("all_but_n_full"))]
+        if self.options.get("all_incremental_but_n_full") is not None:
+            action = [
+                "remove-all-inc-but-n-full",
+                str(self.options.get("all_incremental_but_n_full")),
+            ]
+        if action is None:
+            echo_failure("Please provide a remove action")
+            if self.verbose:
+                print(self.options)
+            sys.exit(1)
+
+        if self.options.get("force"):
+            args.append("--force")
+
+        if self.verbose:
+            echo_info("Collection status of the backup in target: '{}'".format(target))
+
+        return self._execute(*action, *args, target, runtime_env=self.get_aws_secrets())
 
 
 def duplicity_cmd(search_path=None):

@@ -20,7 +20,7 @@ from duplicity_backup_s3.utils import check_config_file
 @click.option("--debug", is_flag=True, help="Be even more verbose", default=False)
 def incr(**options):
     """Perform an Incremental backup."""
-    check_config_file(options.get("config"), verbose=options.get('verbose'))
+    check_config_file(options.get("config"), verbose=options.get("verbose"))
 
     dupe = DuplicityS3(**options)
     return dupe.do_incremental()

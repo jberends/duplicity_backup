@@ -13,15 +13,10 @@ from duplicity_backup_s3.utils import check_config_file
     envvar="DUPLICITY_BACKUP_S3_CONFIG",
     default=CONFIG_FILEPATH,
 )
-@click.option("--file", "--dir", "file", help="File or directory to verify.")
-@click.option(
-    "--time",
-    help="Time of the backup to check. eg. '8h', '7D', '1M', 'now', '2019-06-03'",
-)
 @click.option("-v", "--verbose", is_flag=True, help="Be more verbose", default=False)
-def verify(**options):
-    """Verify backup."""
+def status(**options):
+    """Status of the backup collection."""
     check_config_file(options.get("config"), verbose=options.get("verbose"))
 
     dup = DuplicityS3(**options)
-    dup.do_verify()
+    dup.do_collection_status()

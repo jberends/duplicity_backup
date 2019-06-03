@@ -5,10 +5,14 @@ import sys
 
 import click
 
-from .defaults import CONTEXT_SETTINGS
+from .commands.cleanup import cleanup
 from .commands.incr import incr
 from .commands.init import init
+from .commands.list import list as list_files
+from .commands.remove import remove
+from .commands.status import status
 from .commands.verify import verify
+from .defaults import CONTEXT_SETTINGS
 
 
 class AliasedGroup(click.Group):
@@ -27,7 +31,10 @@ main.add_command(incr)
 main.add_command(verify)
 # main.add_command(restore)
 main.add_command(init)
-
+main.add_command(cleanup)
+main.add_command(status)
+main.add_command(list_files)
+main.add_command(remove)
 
 if __name__ == "__main__":
     sys.exit(main())  # pragma: no cover

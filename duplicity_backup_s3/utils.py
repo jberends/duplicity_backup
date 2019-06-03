@@ -4,8 +4,8 @@ from contextlib import contextmanager
 from pathlib import Path
 
 import click
-from cerberus import SchemaError
-from cerberus.errors import ValidationError
+
+from duplicity_backup_s3.defaults import config_file_schema
 
 
 def echo_success(text, nl=True):
@@ -56,39 +56,6 @@ def echo_info(text, nl=True):
     :param nl: add newline
     """
     click.secho(text, bold=True, nl=nl)
-
-
-"""
-aws:
-  AWS_ACCESS_KEY_ID: foobar_aws_key_id
-  AWS_SECRET_ACCESS_KEY: foobar_aws_access_key
-backuproot: /home
-excludes:
-  - _TESTFILE_TO_EXCLUDE
-includes:
-  - Pictures
-remote:
-  bucket: ''
-  path: '__test'
-"""
-
-string_type = dict(type="string")
-
-config_file_schema = dict(
-    aws=dict(
-        type="dict",
-        allow_unknown=False,
-        schema=dict(AWS_ACCESS_KEY_ID=string_type, AWS_SECRET_ACCESS_KEY=string_type),
-    ),
-    backuproot=string_type,
-    includes=dict(type="list", items=[string_type]),
-    excludes=dict(type="list", items=[string_type]),
-    remote=dict(
-        type="dict",
-        allow_unknown=False,
-        schema=dict(bucket=string_type, path=string_type),
-    ),
-)
 
 
 def check_config_file(config_file, exit=True, verbose=False):
