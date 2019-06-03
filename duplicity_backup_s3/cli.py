@@ -6,11 +6,12 @@ from pathlib import Path
 from pprint import pprint
 
 import click
+import yaml
 
 from . import __version__
-from .defaults import CONFIG_FILEPATH
+from .defaults import CONFIG_FILEPATH, EMPTY_CONFIGFILE
 from .duplicity_s3 import DuplicityS3
-from .utils import echo_failure
+from .utils import echo_failure, echo_info
 
 CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"], "max_content_width": 88}
 UNKNOWN_OPTIONS = {"ignore_unknown_options": True}.update(CONTEXT_SETTINGS)
@@ -25,12 +26,20 @@ UNKNOWN_OPTIONS = {"ignore_unknown_options": True}.update(CONTEXT_SETTINGS)
     envvar="DUPLICITY_BACKUP_S3_CONFIG",
     default=CONFIG_FILEPATH,
 )
+@click.option('--init', is_flag=True, help="Initialise a empty configuration YAML", default=False)
 @click.option(
     "--dry-run", envvar="DRY_RUN", is_flag=True, help="Dry run", default=False
 )
 @click.option("-v", "--verbose", is_flag=True, help="Be more verbose", default=False)
 def main(**options):
     """Console script for duplicity_backup_s3."""
+
+    if options.get('init') is not None:
+        # do initialisation
+        with open(options.get('config'), 'w') as fd:
+            echo_info("Initialising an empty config file in: '{}'".format(Path.cwd() / options.get("config")))
+            fd.write(yaml.dump(EMPTY_CONFIGFILE))
+
 
     if options.get("config") is not None:
         config = Path(Path.cwd() / options.get("config"))
