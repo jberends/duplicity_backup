@@ -44,8 +44,8 @@ config_file_schema = dict(
         schema=dict(AWS_ACCESS_KEY_ID=string_type, AWS_SECRET_ACCESS_KEY=string_type),
     ),
     backuproot=string_type,
-    includes=dict(type="list", schema=[string_type]),
-    excludes=dict(type="list", schema=[string_type]),
+    includes=dict(type="list", schema=string_type),
+    excludes=dict(type="list", schema=string_type),
     remote=dict(
         type="dict",
         allow_unknown=False,
