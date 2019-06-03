@@ -207,3 +207,8 @@ dmypy.json
 pyvenv.cfg
 .venv
 pip-selfcheck.json
+
+
+# USER CUSTOMS
+/duplicity_backup_s3.toml
+/duplicity_backup_s3.yaml

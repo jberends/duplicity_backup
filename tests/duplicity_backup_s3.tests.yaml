@@ -1,0 +1,12 @@
+aws:
+  aws_access_key_id: foobar_aws_key_id
+  aws_secret_access_key: foobar_aws_access_key
+backuproot: /home
+excludes:
+  - .config
+includes:
+  - Pictures
+remote:
+  bucket: ''
+  path: ''
+  use_european_s3_buckets: ''

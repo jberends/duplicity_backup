@@ -4,11 +4,14 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+"duplicity-backup-s3" = {editable = true, path = "."}
+envparse = "*"
+classproperty = "*"
+PyYAML = "*"
 
 [dev-packages]
 black = "*"
 bumpversion = "*"
-wheel = "*"
 watchdog = "*"
 flake8 = "*"
 tox = "*"
