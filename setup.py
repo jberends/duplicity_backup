@@ -53,7 +53,7 @@ setup(
     include_package_data=True,
     keywords="duplicity_backup_s3",
     name="duplicity_backup_s3",
-    packages=find_packages(include=["duplicity_backup_s3"]),
+    packages=find_packages(exclude=["tests"]),
     setup_requires=setup_requirements,
     test_suite="tests",
     tests_require=test_requirements,
