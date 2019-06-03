@@ -35,8 +35,13 @@ class DuplicityS3(object):
         self._config_file = options.get("config")
         self.read_config(path=self._config_file)
 
+        # in case of verbosity be more than 3 verbose
+        verbosity = (
+            DUPLICITY_VERBOSITY + 1 if options.get("verbose") else DUPLICITY_VERBOSITY
+        )
+
         self._args = [
-            "-v{}".format(DUPLICITY_VERBOSITY),
+            "-v{}".format(verbosity),
             "--full-if-older-than",
             str(FULL_IF_OLDER_THAN),
         ] + DUPLICITY_DEFAULT_ARGS
@@ -86,16 +91,18 @@ class DuplicityS3(object):
         target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))
         args = self._args
         runtime_env = self.get_aws_secrets()
-        do = "incremental"
+        action = "inc"
 
         if self.dry_run:
             args.append("--dry-run")
 
-        command = [duplicity_cmd(), *args, source, target]
+        command = [duplicity_cmd(), action, *args, source, target]
         pprint([command, runtime_env])
 
         # execute duplicity command
-        results = subprocess.run(command, shell=NEED_SUBPROCESS_SHELL, env=runtime_env)
+        self.last_results = subprocess.run(command, shell=NEED_SUBPROCESS_SHELL, env=runtime_env)
+
+        return self.last_results.returncode
 
 
 def read_env(env_filename=None):

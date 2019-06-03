@@ -13,7 +13,7 @@ DUPLICITY_DEFAULT_ARGS = [
     "--exclude-device-files",
     "--no-encryption"
 ]
-DUPLICITY_VERBOSITY = 5
+DUPLICITY_VERBOSITY = 3
 
 __platform = platform.system()
 ON_LINUX = os.name == 'posix' or __platform == 'Linux'

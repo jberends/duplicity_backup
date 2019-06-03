@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """Tests for `duplicity_backup_s3` package."""
+from test.support import EnvironmentVarGuard
 from unittest import TestCase
 
 from click.testing import CliRunner
@@ -14,7 +15,8 @@ class TestDuplicity_s3(TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        self.runner = CliRunner()
+        self.runner = CliRunner(env=dict(DRY_RUN=1))
+
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
@@ -48,8 +50,9 @@ class TestDuplicity_s3(TestCase):
         self.assertIn("please provide", result.output)
 
     def test_with_config(self):
+
         result = self.runner.invoke(
-            cli.main, "--config='duplicity_backup_s3.tests.yaml'"
+            cli.main, "--config='duplicity_backup_s3.tests.yaml' --dry-run"
         )
         self.assertEqual(
             result.exit_code,
