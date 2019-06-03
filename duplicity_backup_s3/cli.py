@@ -36,7 +36,7 @@ def main(**options):
 
     if options.get('init'):
         # do initialisation
-        with open(options.get('config'), 'w') as fd:
+        with options.get('config').open('w') as fd:
             echo_info("Initialising an empty config file in: '{}'".format(Path.cwd() / options.get("config")))
             fd.write(yaml.dump(EMPTY_CONFIGFILE))
 
