@@ -63,7 +63,7 @@ class DuplicityS3(object):
             path = self._config_file
 
         self._config = {}
-        with open(self._config_file, "r") as fd:
+        with self._config_file.open() as fd:
             self._config = yaml.safe_load(fd)
 
     def get_aws_secrets(self) -> Dict:
