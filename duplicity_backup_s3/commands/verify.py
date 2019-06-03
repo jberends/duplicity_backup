@@ -5,7 +5,7 @@ from duplicity_backup_s3.duplicity_s3 import DuplicityS3
 from duplicity_backup_s3.utils import check_config_file
 
 
-@click.command(context_settings=CONTEXT_SETTINGS, short_help="Verify backup")
+@click.command(context_settings=CONTEXT_SETTINGS)
 @click.option(
     "-c",
     "--config",

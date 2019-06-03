@@ -12,7 +12,7 @@ from duplicity_backup_s3.defaults import (
 from duplicity_backup_s3.utils import echo_info, echo_failure, check_config_file
 
 
-@click.command(context_settings=CONTEXT_SETTINGS, short_help="Initialise config file")
+@click.command(context_settings=CONTEXT_SETTINGS)
 @click.option(
     "-c",
     "--config",
@@ -25,7 +25,7 @@ from duplicity_backup_s3.utils import echo_info, echo_failure, check_config_file
 )
 @click.option("-v", "--verbose", is_flag=True, help="Be more verbose", default=False)
 def init(**options):
-    """Initialise an empty configuration yaml file."""
+    """Initialise an empty configuration file."""
 
     config = check_config_file(
         options.get("config"), exit=False, verbose=options.get("verbose")
