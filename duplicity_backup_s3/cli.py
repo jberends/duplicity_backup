@@ -34,7 +34,7 @@ UNKNOWN_OPTIONS = {"ignore_unknown_options": True}.update(CONTEXT_SETTINGS)
 def main(**options):
     """Console script for duplicity_backup_s3."""
 
-    if options.get('init') is not None:
+    if options.get('init'):
         # do initialisation
         with open(options.get('config'), 'w') as fd:
             echo_info("Initialising an empty config file in: '{}'".format(Path.cwd() / options.get("config")))
