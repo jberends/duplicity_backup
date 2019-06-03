@@ -11,6 +11,8 @@ with open("README.md") as readme_file:
 with open("CHANGELOG.md") as history_file:
     history = history_file.read()
 
+from duplicity_backup_s3 import __version__
+
 requirements = ["Click>=6.0", "PyYAML", "envparse"]
 
 setup_requirements = []
@@ -55,6 +57,6 @@ setup(
     test_suite="tests",
     tests_require=test_requirements,
     url="https://github.com/jberends/duplicity_s3",
-    version="0.1.0",
+    version=__version__,
     zip_safe=False,
 )
