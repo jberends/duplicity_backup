@@ -162,7 +162,7 @@ class DuplicityS3(object):
         args = (
             self._args
             + DUPLICITY_BACKUP_ARGS
-            + ["--full-if-older-than", str(FULL_IF_OLDER_THAN)]
+            + ["--full-if-older-than", str(self._config.get('full_if_older_than'), FULL_IF_OLDER_THAN)]
             + self.get_cludes(
                 includes=self._config.get("includes"),
                 excludes=self._config.get("excludes"),
