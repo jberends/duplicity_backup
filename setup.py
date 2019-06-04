@@ -28,7 +28,7 @@ setup(
     author="Jochem Berends",
     author_email="jochem.berends@ke-works.com",
     classifiers=[
-        "Development Status :: 2 - Pre-Alpha",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: Apache Software License",
         "Natural Language :: English",

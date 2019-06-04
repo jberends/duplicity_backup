@@ -1,6 +1,6 @@
 # Duplicity Backup to S3
 
-[![image](https://img.shields.io/pypi/v/duplicity_backupp.svg)](https://pypi.python.org/pypi/duplicity_backup)
+[![image](https://img.shields.io/pypi/v/duplicity_backup_s3.svg)](https://pypi.python.org/pypi/duplicity_backup_s3)
 
 [![image](https://img.shields.io/travis/jberends/duplicity_backup.svg)](https://travis-ci.org/jberends/duplicity_backup)
 
