@@ -43,12 +43,14 @@ config_file_schema = dict(
         allow_unknown=False,
         schema=dict(AWS_ACCESS_KEY_ID=string_type, AWS_SECRET_ACCESS_KEY=string_type),
     ),
-    backuproot=string_type,
+    backuproot=dict(type="string", required=True),
     includes=dict(type="list", schema=string_type),
     excludes=dict(type="list", schema=string_type),
     remote=dict(
         type="dict",
         allow_unknown=False,
-        schema=dict(bucket=string_type, path=string_type),
+        required=True,
+        schema=dict(bucket=dict(type="string", required=True), path=dict(type="string", required=True)),
     ),
+    full_if_older_than=string_type,
 )

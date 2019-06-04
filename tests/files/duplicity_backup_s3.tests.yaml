@@ -9,4 +9,4 @@ includes:
 remote:
   bucket: ''
   path: ''
-  use_european_s3_buckets: ''
+full_if_older_than: "7D"

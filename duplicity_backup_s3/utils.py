@@ -58,11 +58,12 @@ def echo_info(text, nl=True):
     click.secho(text, bold=True, nl=nl)
 
 
-def check_config_file(config_file, exit=True, verbose=False):
+def check_config_file(config_file, exit=True, verbose=False, testing=False):
     """Check and return the full absolute Path to the config file other wise exit or return False.
 
     :param config_file: filename and/or path to the config file
     :param exit: when exit is true, exit with return_code 2
+    :param testing: in testing mode, no CLI verbosity
     """
     config_path = Path(Path.cwd() / config_file)
     if not config_path.exists():
@@ -84,13 +85,15 @@ def check_config_file(config_file, exit=True, verbose=False):
         validator = Validator()
         validator.allow_unknown = False
         if not validator.validate(yaml.safe_load(fd), config_file_schema):
-            echo_failure(
-                "The configuration file cannot be read: \n{}".format(validator.errors)
+            if not testing:
+                echo_failure(
+                "The configuration file is incorrectly formatted: \n{}".format(validator.errors)
             )
-            if exit:
+            if exit and not testing:
                 sys.exit(2)
+            return validator.errors
 
-    if verbose:
+    if verbose and not testing:
         echo_info(
             "The configuration file is succesfully validated against the validation schema"
         )

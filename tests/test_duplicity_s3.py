@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 
 """Tests for `duplicity_backup_s3` package."""
-from test.support import EnvironmentVarGuard
+from pathlib import Path
 from unittest import TestCase
 
 from click.testing import CliRunner
 
-import duplicity_backup_s3.commands.incr
-from duplicity_backup_s3 import cli, __version__
+from duplicity_backup_s3 import __version__
+from duplicity_backup_s3.cli import duplicity_backup_s3
 
 
 class TestDuplicity_s3(TestCase):
@@ -16,13 +16,13 @@ class TestDuplicity_s3(TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        self.runner = CliRunner(env=dict(DRY_RUN=1))
+        self.runner = CliRunner(env=dict(DRY_RUN="1"))
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
 
     def test_command_line_interface_help(self):
-        result = self.runner.invoke(duplicity_backup_s3.commands.incr.duplicity_backup_s3, ["--help"])
+        result = self.runner.invoke(duplicity_backup_s3, ["--help"])
         self.assertEqual(result.exit_code, 0)
         self.assertIn(
             "--help",
@@ -32,7 +32,7 @@ class TestDuplicity_s3(TestCase):
         self.assertIn("Show this message and exit.", result.output)
 
     def test_command_line_interface_version(self):
-        result = self.runner.invoke(duplicity_backup_s3.commands.incr.duplicity_backup_s3, ["--version"])
+        result = self.runner.invoke(duplicity_backup_s3, ["--version"])
         self.assertEqual(
             result.exit_code,
             0,
@@ -41,18 +41,18 @@ class TestDuplicity_s3(TestCase):
         self.assertIn(__version__, result.output)
 
     def test_no_config(self):
-        result = self.runner.invoke(duplicity_backup_s3.commands.incr.duplicity_backup_s3, "--config foobar")
+        result = self.runner.invoke(duplicity_backup_s3, "init --config foobar")
         self.assertEqual(
             result.exit_code,
-            2,
+            1,
             "Results of the run were: \n---\n{}\n---".format(result.output),
         )
         self.assertIn("please provide", result.output)
 
     def test_with_config(self):
-
+        cfg_file = Path(Path(__file__).parent / "files" / "duplicity_backup_s3.tests.yaml")
         result = self.runner.invoke(
-            duplicity_backup_s3.commands.incr.duplicity_backup_s3, "--config='duplicity_backup_s3.tests.yaml' --dry-run"
+            duplicity_backup_s3, "incr --config={} --dry-run".format(cfg_file)
         )
         self.assertEqual(
             result.exit_code,
@@ -63,7 +63,7 @@ class TestDuplicity_s3(TestCase):
 
 class TestNonCLI(TestCase):
     def test_duplicity(self):
-        """Test something."""
-        from duplicity_backup_s3.duplicity_s3 import duplicity_cmd
+        """Search the duplicity command on the platform."""
+        from duplicity_backup_s3.duplicity_s3 import DuplicityS3
 
-        self.assertTrue(duplicity_cmd())
+        self.assertTrue(DuplicityS3.duplicity_cmd())

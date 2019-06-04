@@ -41,7 +41,6 @@ def init(**options):
         deprecated_config_filename = Path("{}.backup".format(config.name))
         config.replace(deprecated_config_filename)
 
-
     with config.open("w") as fd:
         echo_info("Initialising an empty config file in: '{}'".format(config))
         fd.write(yaml.dump(EMPTY_CONFIGFILE))

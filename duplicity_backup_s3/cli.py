@@ -1,18 +1,16 @@
 # -*- coding: utf-8 -*-
 
-"""Console script for duplicity_backup_s3."""
-import sys
-
 import click
 
 from duplicity_backup_s3.commands.cleanup import cleanup
 from duplicity_backup_s3.commands.incr import incr
 from duplicity_backup_s3.commands.init import init
+from duplicity_backup_s3.commands.list import list as list_files
 from duplicity_backup_s3.commands.remove import remove
 from duplicity_backup_s3.commands.status import status
 from duplicity_backup_s3.commands.verify import verify
-from duplicity_backup_s3.commands.list import list as list_files
 from duplicity_backup_s3.defaults import CONTEXT_SETTINGS
+from duplicity_backup_s3 import __version__
 
 
 class AliasedGroup(click.Group):
@@ -22,8 +20,9 @@ class AliasedGroup(click.Group):
 
 
 @click.group(cls=AliasedGroup, context_settings=CONTEXT_SETTINGS)
-@click.version_option()
+@click.version_option(version=__version__)
 def duplicity_backup_s3():
+    """Duplicity Backup to S3 wrapper."""
     pass
 
 

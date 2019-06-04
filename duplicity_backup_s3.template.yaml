@@ -9,3 +9,4 @@ includes:
 remote:
   bucket: ''
   path: '__test'
+full_if_older_than: 7D

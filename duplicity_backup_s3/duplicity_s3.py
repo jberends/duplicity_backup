@@ -87,7 +87,7 @@ class DuplicityS3(object):
     def _execute(self, *cmd_args, runtime_env=None):
         """Execute the duplicity command."""
 
-        command = [self._duplicity_cmd(), *cmd_args]
+        command = [self.duplicity_cmd(), *cmd_args]
 
         if self.verbose:
             print("command used:")
@@ -105,9 +105,22 @@ class DuplicityS3(object):
             command, shell=NEED_SUBPROCESS_SHELL, env=runtime_env
         )
 
+        try:
+            self.last_results.check_returncode()
+        except subprocess.CalledProcessError as e:
+            echo_failure(
+                "The duplicity command exitted with an error. Command may not have succeeded."
+            )
+            if self.verbose:
+                echo_info(
+                    "More information on the error:\n{}".format(
+                        e.output
+                    )
+                )
         return self.last_results.returncode
 
-    def _duplicity_cmd(self, search_path=None):
+    @classmethod
+    def duplicity_cmd(cls, search_path=None):
         """
         Check if duplicity is installed and return version.
 
@@ -325,20 +338,3 @@ class DuplicityS3(object):
             echo_info("Collection status of the backup in target: '{}'".format(target))
 
         return self._execute(*action, *args, target, runtime_env=self.get_aws_secrets())
-
-
-def duplicity_cmd(search_path=None):
-    """
-    Check if duplicity is installed and return version.
-
-    :param search_path: path to search for duplicity if not in PATH. defaults None.
-    :return:
-    """
-    from shutil import which
-
-    duplicity_cmd = which("duplicity", path=search_path)
-
-    if not duplicity_cmd:
-        return OSError("Could not find `duplicity` in path, is it installed?")
-
-    return duplicity_cmd
