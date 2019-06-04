@@ -18,13 +18,9 @@ requirements = ["Click>=6.0", "PyYAML", "envparse", "cerberus"]
 setup_requirements = []
 
 test_requirements = [
-    "black",
-    "bumpversion",
-    "watchdog",
     "flake8",
     "tox",
     "coverage",
-    "twine",
 ]
 
 setup(
