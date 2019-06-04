@@ -108,3 +108,26 @@ class TestConfig(TestCase):
                 check_config_file(config_file=Path(t.name), testing=True),
                 {"backuproot": ["must be of string type"]},
             )
+
+    def test_config_from_production_success(self):
+        config_yaml = """
+        aws:
+          AWS_ACCESS_KEY_ID: fakekey 
+          AWS_SECRET_ACCESS_KEY: fakesecret
+        backuproot: /opt/dir/
+        includes:
+          - /opt/dir/*-media
+          - /opt/dir/var/archives
+        excludes: 
+          - "**"
+        remote:
+          bucket: somebucket
+          path: __testpath
+        """
+        with NamedTemporaryFile(mode="w") as t:
+            t.write(config_yaml)
+            t.flush()
+            self.assertEqual(
+                check_config_file(config_file=Path(t.name), testing=True),
+                Path(t.name),
+            )

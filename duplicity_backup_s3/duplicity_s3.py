@@ -4,7 +4,7 @@ import subprocess
 import sys
 from pathlib import Path
 from pprint import pprint
-from typing import Dict
+from typing import Dict, Optional, List
 
 import yaml
 from envparse import env
@@ -84,7 +84,7 @@ class DuplicityS3(object):
                 AWS_SECRET_ACCESS_KEY=self.env("AWS_SECRET_ACCESS_KEY", default=""),
             )
 
-    def _execute(self, *cmd_args, runtime_env=None):
+    def _execute(self, *cmd_args, runtime_env: Dict = None) -> int:
         """Execute the duplicity command."""
 
         command = [self.duplicity_cmd(), *cmd_args]
@@ -112,31 +112,30 @@ class DuplicityS3(object):
                 "The duplicity command exitted with an error. Command may not have succeeded."
             )
             if self.verbose:
-                echo_info(
-                    "More information on the error:\n{}".format(
-                        e.output
-                    )
-                )
+                echo_info("More information on the error:\n{}".format(e.output))
         return self.last_results.returncode
 
     @classmethod
-    def duplicity_cmd(cls, search_path=None):
+    def duplicity_cmd(cls, search_path=None) -> str:
         """
         Check if duplicity is installed and return version.
 
         :param search_path: path to search for duplicity if not in PATH. defaults None.
         :return: path to duplicity
+        :raises OSError: When the duplicity command is not found in PATH.
         """
         from shutil import which
 
         duplicity_cmd = which("duplicity", path=search_path)
 
         if not duplicity_cmd:
-            return OSError("Could not find `duplicity` in path, is it installed?")
+            raise OSError("Could not find `duplicity` in path, is it installed?")
 
         return duplicity_cmd
 
-    def get_cludes(self, includes=None, excludes=None):
+    def get_cludes(
+        self, includes: List[str] = None, excludes: List[str] = None
+    ) -> List[str]:
         """
         Get includes or excludes command arguments.
 
@@ -151,7 +150,7 @@ class DuplicityS3(object):
             arg_list.extend(["--exclude={}".format(path) for path in excludes])
         return arg_list
 
-    def do_incremental(self):
+    def do_incremental(self) -> int:
         """
         Incremental duplicity Backup.
 
@@ -162,7 +161,10 @@ class DuplicityS3(object):
         args = (
             self._args
             + DUPLICITY_BACKUP_ARGS
-            + ["--full-if-older-than", str(self._config.get('full_if_older_than'), FULL_IF_OLDER_THAN)]
+            + [
+                "--full-if-older-than",
+                self._config.get("full_if_older_than", FULL_IF_OLDER_THAN),
+            ]
             + self.get_cludes(
                 includes=self._config.get("includes"),
                 excludes=self._config.get("excludes"),
@@ -176,10 +178,10 @@ class DuplicityS3(object):
 
         return self._execute(action, *args, source, target, runtime_env=runtime_env)
 
-    def do_restore(self):
+    def do_restore(self) -> int:
         raise NotImplementedError("Not yet, bro (https://youtu.be/rLwbzGyC6t4?t=52)")
 
-    def do_verify(self):
+    def do_verify(self) -> int:
         """Verify the backup.
 
         From the duplicity man page:
@@ -216,7 +218,7 @@ class DuplicityS3(object):
 
             return self._execute(action, *args, source, target, runtime_env=runtime_env)
 
-    def do_cleanup(self):
+    def do_cleanup(self) -> int:
         """
         Cleanup of dirty remote.
 
@@ -244,7 +246,7 @@ class DuplicityS3(object):
 
         return self._execute(action, *args, target, runtime_env=runtime_env)
 
-    def do_collection_status(self):
+    def do_collection_status(self) -> int:
         """
         Collection status of the backup.
 
@@ -265,7 +267,7 @@ class DuplicityS3(object):
             action, *self._args, target, runtime_env=self.get_aws_secrets()
         )
 
-    def do_list_current_files(self):
+    def do_list_current_files(self) -> int:
         """
         List current files included in the backup.
 
@@ -290,7 +292,7 @@ class DuplicityS3(object):
 
         return self._execute(action, *args, target, runtime_env=self.get_aws_secrets())
 
-    def do_remove_older(self):
+    def do_remove_older(self) -> int:
         """Remove older backup sets.
 
         From the docs:
