@@ -11,8 +11,7 @@ python:
 dist: xenial
 
 before_install:
-    - sudo apt-add-repository --yes ppa:duplicity-team/ppa
-    - sudo apt update
+    - sudo apt-add-repository --yes --update ppa:duplicity-team/ppa
     - sudo apt install -y duplicity python-boto
 
 # Command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
