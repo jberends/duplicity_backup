@@ -33,6 +33,7 @@ EMPTY_CONFIGFILE = dict(
     includes=["/full/path/to_include", "/another/path/to_include"],
     excludes=["/full/path/to_exclude", "/another/path/to_exclude"],
     remote=dict(bucket="<bucketname>", path="<path>"),
+    full_if_older_than="7D",
 )
 
 # validation schema
