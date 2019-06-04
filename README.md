@@ -6,7 +6,7 @@
 
 [![image](https://pyup.io/repos/github/jberends/duplicity_backup/shield.svg)](https://pyup.io/repos/github/jberends/duplicity_backup)
 
-Duplicity backup to S3 for production servers using simple toml file.
+Duplicity backup to S3 for production servers using simple yaml file.
 
 ## License
 

@@ -37,7 +37,7 @@ setup(
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
     ],
-    description="Duplicity backup to S3 for production servers using simple toml file.",
+    description="Duplicity backup to S3 for production servers using simple yaml config file.",
     entry_points={
         "console_scripts": (
             "duplicity_backup_s3 = duplicity_backup_s3.cli:duplicity_backup_s3")
