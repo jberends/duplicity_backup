@@ -4,4 +4,4 @@
 
 __author__ = """Jochem Berends"""
 __email__ = "jochem.berends@ke-works.com"
-__version__ = "0.4.2"
+__version__ = "0.5.0"
