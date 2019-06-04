@@ -1,10 +1,10 @@
 # Duplicity Backup to S3
 
-[![image](https://img.shields.io/pypi/v/duplicity_backup_s3.svg)](https://pypi.python.org/pypi/duplicity_backup_s3)
+[![image](https://img.shields.io/pypi/v/duplicity_backupp.svg)](https://pypi.python.org/pypi/duplicity_backup)
 
-[![image](https://img.shields.io/travis/jberends/duplicity_backup_s3.svg)](https://travis-ci.org/jberends/duplicity_backup_s3)
+[![image](https://img.shields.io/travis/jberends/duplicity_backup.svg)](https://travis-ci.org/jberends/duplicity_backup)
 
-[![image](https://pyup.io/repos/github/jberends/duplicity_backup_s3/shield.svg)](https://pyup.io/repos/github/jberends/duplicity_backup_s3)
+[![image](https://pyup.io/repos/github/jberends/duplicity_backup/shield.svg)](https://pyup.io/repos/github/jberends/duplicity_backup)
 
 Duplicity backup to S3 for production servers using simple toml file.
 
