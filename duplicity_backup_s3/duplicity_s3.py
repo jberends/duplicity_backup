@@ -2,6 +2,7 @@
 import os
 import subprocess
 import sys
+import warnings
 from pathlib import Path
 from pprint import pprint
 from typing import Dict, Optional, List
@@ -55,7 +56,9 @@ class DuplicityS3(object):
 
         # setting environment
         self.env = env
-        self.env.read_envfile()
+        with warnings.catch_warnings():  # catch the warnings that env puts out.
+            warnings.simplefilter("ignore", UserWarning)
+            self.env.read_envfile()
 
     def read_config(self, path: Path = None) -> None:
         """Read the config file.
@@ -134,8 +137,8 @@ class DuplicityS3(object):
         return duplicity_cmd
 
     def get_cludes(
-        self, includes: List[str] = None, excludes: List[str] = None
-    ) -> List[str]:
+            self, includes: List[str] = None, excludes: List[str] = None
+        ) -> List[str]:
         """
         Get includes or excludes command arguments.
 
@@ -145,7 +148,9 @@ class DuplicityS3(object):
         """
         arg_list = []
         if includes:
-            arg_list.extend(["--include={}".format(path) for path in includes])
+            arg_list.extend([
+                "--include={}".format(path) for path in includes
+            ])
         if excludes:
             arg_list.extend(["--exclude={}".format(path) for path in excludes])
         return arg_list
