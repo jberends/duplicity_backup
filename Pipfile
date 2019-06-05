@@ -11,8 +11,6 @@ cerberus = "*"
 
 [dev-packages]
 black = "*"
-bumpversion = "*"
-watchdog = "*"
 flake8 = "*"
 tox = "*"
 coverage = "*"
