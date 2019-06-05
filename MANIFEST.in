@@ -1,9 +1,21 @@
 include CHANGELOG.md
 include LICENSE
-include README.rst
+include README.md
+include tox.ini
+include Pipfile
+include Pipfile.lock
+include .coveragerc
+include .editorconfig
+include .env.template
+include setup.py
+include setup.cfg
 
 recursive-include tests *
 recursive-exclude * __pycache__
-recursive-exclude * *.py[co]
+global-exclude *.py[coi]
+exclude .env*
+exclude .idea
+recursive-exclude .tox *
+recursive-exclude .eggs *
 
-recursive-include *.rst conf.py Makefile make.bat *.jpg *.png *.gif
+recursive-include duplicity_backup_s3 *.py *.md *.yaml *.yml *.template conf.py Makefile make.bat *.jpg *.png *.gif

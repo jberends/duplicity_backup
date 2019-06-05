@@ -5,7 +5,7 @@ from pathlib import Path
 
 import click
 
-from duplicity_backup_s3.defaults import config_file_schema
+from duplicity_backup_s3.defaults import CONFIG_SCHEMA_PATH
 
 
 def echo_success(text, nl=True):
@@ -80,18 +80,16 @@ def check_config_file(config_file, exit=True, verbose=False, testing=False):
     from cerberus import Validator
     import yaml
 
-    with config_path.open() as fd:
-        # try:
-        validator = Validator()
-        validator.allow_unknown = False
-        if not validator.validate(yaml.safe_load(fd), config_file_schema):
-            if not testing:
-                echo_failure(
+    validator = Validator()
+    validator.allow_unknown = False
+    if not validator.validate(yaml.safe_load(config_path.open()), yaml.safe_load(CONFIG_SCHEMA_PATH.open())):
+        if not testing:
+            echo_failure(
                 "The configuration file is incorrectly formatted: \n{}".format(validator.errors)
             )
-            if exit and not testing:
-                sys.exit(2)
-            return validator.errors
+        if exit and not testing:
+            sys.exit(2)
+        return validator.errors
 
     if verbose and not testing:
         echo_info(

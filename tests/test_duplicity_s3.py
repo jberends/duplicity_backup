@@ -16,7 +16,7 @@ class TestDuplicity_s3(TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        self.runner = CliRunner(env=dict(DRY_RUN="1"))
+        self.runner = CliRunner(env=dict(DRY_RUN="true"))
 
     def tearDown(self):
         """Tear down test fixtures, if any."""

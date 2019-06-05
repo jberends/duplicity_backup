@@ -1,0 +1,52 @@
+#
+# This is the validation schema of the configuration file for duplicity_backup_s3
+#
+# We use 'cerberus' to validate the dictionary
+# src: https://docs.python-cerberus.org/en/stable/validation-rules.html
+
+aws:
+  type: dict
+  allow_unknown: false
+  schema:
+    AWS_ACCESS_KEY_ID:
+      type: string
+    AWS_SECRET_ACCESS_KEY:
+      type: string
+
+backuproot:
+  required: true
+  type: string
+
+excludes:
+  type: list
+  schema:
+    type: string
+
+includes:
+  type: list
+  schema:
+    type: string
+
+remote:
+  required: true
+  type: dict
+  schema:
+    bucket:
+      required: true
+      type: string
+    path:
+      required: true
+      type: string
+    s3-european-buckets:
+      type: boolean
+    use-new-style:
+      type: boolean
+
+full_if_older_than:
+  type: string
+
+log-path:
+  type: string
+
+volsize:
+  type: integer

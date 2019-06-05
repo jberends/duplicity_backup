@@ -2,8 +2,13 @@ import os
 import platform
 from pathlib import Path
 
+# default config file name
 CONFIG_FILENAME = "duplicity_backup_s3.yaml"
 CONFIG_FILEPATH = Path.cwd() / CONFIG_FILENAME
+
+# Schema to check config file against
+CONFIG_SCHEMA_FILENAME = "schema.yaml"
+CONFIG_SCHEMA_PATH = Path(Path(__file__).parent / "files" / CONFIG_SCHEMA_FILENAME)
 
 FULL_IF_OLDER_THAN = "7D"
 DUPLICITY_BASIC_ARGS = [
@@ -34,24 +39,4 @@ EMPTY_CONFIGFILE = dict(
     excludes=["/full/path/to_exclude", "/another/path/to_exclude"],
     remote=dict(bucket="<bucketname>", path="<path>"),
     full_if_older_than="7D",
-)
-
-# validation schema
-string_type = dict(type="string")
-config_file_schema = dict(
-    aws=dict(
-        type="dict",
-        allow_unknown=False,
-        schema=dict(AWS_ACCESS_KEY_ID=string_type, AWS_SECRET_ACCESS_KEY=string_type),
-    ),
-    backuproot=dict(type="string", required=True),
-    includes=dict(type="list", schema=string_type),
-    excludes=dict(type="list", schema=string_type),
-    remote=dict(
-        type="dict",
-        allow_unknown=False,
-        required=True,
-        schema=dict(bucket=dict(type="string", required=True), path=dict(type="string", required=True)),
-    ),
-    full_if_older_than=string_type,
 )
