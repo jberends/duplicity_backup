@@ -4,10 +4,17 @@ from unittest import TestCase
 
 from click.testing import CliRunner
 
-from duplicity_backup_s3.utils import check_config_file
+from duplicity_backup_s3.config import check_config_file
 
 
 class TestConfig(TestCase):
+    def test_default_config_provided_by_package(self):
+        from duplicity_backup_s3.defaults import CONFIG_TEMPLATE_PATH
+        from duplicity_backup_s3.defaults import CONFIG_SCHEMA_PATH
+        config_tempate_path = CONFIG_TEMPLATE_PATH
+
+        check_config_file(config_file = config_tempate_path, testing=True)
+
     def test_vanilla_config(self):
         config_yaml = """
         aws:
@@ -131,3 +138,4 @@ class TestConfig(TestCase):
                 check_config_file(config_file=Path(t.name), testing=True),
                 Path(t.name),
             )
+

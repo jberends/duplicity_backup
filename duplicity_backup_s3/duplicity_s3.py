@@ -5,7 +5,7 @@ import sys
 import warnings
 from pathlib import Path
 from pprint import pprint
-from typing import Dict, Optional, List
+from typing import Dict, List
 
 import yaml
 from envparse import env
@@ -137,8 +137,8 @@ class DuplicityS3(object):
         return duplicity_cmd
 
     def get_cludes(
-            self, includes: List[str] = None, excludes: List[str] = None
-        ) -> List[str]:
+        self, includes: List[str] = None, excludes: List[str] = None
+    ) -> List[str]:
         """
         Get includes or excludes command arguments.
 
@@ -148,9 +148,7 @@ class DuplicityS3(object):
         """
         arg_list = []
         if includes:
-            arg_list.extend([
-                "--include={}".format(path) for path in includes
-            ])
+            arg_list.extend(["--include={}".format(path) for path in includes])
         if excludes:
             arg_list.extend(["--exclude={}".format(path) for path in excludes])
         return arg_list

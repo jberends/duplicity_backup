@@ -12,11 +12,11 @@ aws:
 backuproot: /home
 
 # a list of exclude and include paths. May be '**' to exclude everything except what directories you include
-excludes:
-  - "**"
-includes:
-  - /home/Pictures
-  - /home/Music
+# excludes:
+#   - "**"
+# includes:
+#   - /home/Pictures
+#   - /home/Music
 
 # backup target
 # S3 Bucket name and path

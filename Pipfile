@@ -8,6 +8,7 @@ name = "pypi"
 envparse = "*"
 PyYAML = "*"
 cerberus = "*"
+appdirs = "*"
 
 [dev-packages]
 black = "*"
