@@ -21,7 +21,8 @@ test_requirements = [
     "flake8",
     "tox",
     "coverage",
-    "appdirs"
+    "appdirs",
+    "pydocstyle",
 ]
 
 setup(

@@ -32,15 +32,6 @@ class TestDuplicity_s3(TestSetup):
         )
         self.assertIn(__version__, result.output)
 
-    def test_no_config(self):
-        result = self.runner.invoke(duplicity_backup_s3, "init --config foobar")
-        self.assertEqual(
-            result.exit_code,
-            1,
-            "Results of the run were: \n---\n{}\n---".format(result.output),
-        )
-        self.assertIn("please provide", result.output)
-
     def test_with_config(self):
         cfg_file = Path(Path(__file__).parent / "files" / "duplicity_backup_s3.tests.yaml")
         result = self.runner.invoke(

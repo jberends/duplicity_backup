@@ -71,7 +71,7 @@ def search_config(
     config_file: Union[Text, Path],
     path: Union[Text, Path, None] = None,
     exit: bool = True,
-) -> Union[Path, bool]:
+) -> Union[Path]:
     """
     Config path searched throughout the filesystem.
 
