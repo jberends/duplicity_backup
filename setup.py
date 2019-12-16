@@ -13,7 +13,7 @@ with open("CHANGELOG.md") as history_file:
 
 from duplicity_backup_s3 import __version__
 
-requirements = ["Click>=6.0", "PyYAML", "envparse", "cerberus"]
+requirements = ["Click>=7.0", "PyYAML", "envparse", "cerberus"]
 
 setup_requirements = []
 
@@ -37,6 +37,12 @@ setup(
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
     ],
+    project_urls={
+        'Changelog': 'https://github.com/jberends/duplicity_backup/blob/master/CHANGELOG.md',
+        'Source': 'https://github.com/jberends/duplicity_backup',
+        'Tracker': 'https://github.com/jberends/duplicity_backup/issues',
+        'Readme': 'https://github.com/jberends/duplicity_backup/blob/master/README.md'
+    },
     description="Duplicity backup to S3 for production servers using simple yaml config file.",
     entry_points={
         "console_scripts": (
