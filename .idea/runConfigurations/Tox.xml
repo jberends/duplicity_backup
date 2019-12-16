@@ -1,0 +1,20 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Tox" type="Tox" factoryName="Tox">
+    <module name="duplicity_s3" />
+    <option name="INTERPRETER_OPTIONS" value="" />
+    <option name="PARENT_ENVS" value="true" />
+    <option name="SDK_HOME" value="$USER_HOME$/.local/share/virtualenvs/duplicity_s3-D-fHjvCW/bin/python" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <option name="IS_MODULE_SDK" value="false" />
+    <option name="ADD_CONTENT_ROOTS" value="true" />
+    <option name="ADD_SOURCE_ROOTS" value="true" />
+    <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+    <arguments>
+      <array />
+    </arguments>
+    <runOnlyEnvs>
+      <array />
+    </runOnlyEnvs>
+    <method v="2" />
+  </configuration>
+</component>

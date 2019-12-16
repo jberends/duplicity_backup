@@ -16,12 +16,12 @@ Free software: Apache Software License 2.0
 
 This is a duplicity command line backup wrapper that will backup to S3 that is using a validated yaml configuration file using modern and awesome CLI patterns. The commands `incremental`, `list files`, `status`, `verify`, `cleanup`, and `remove` are implemented.
 
-The primary use case to build this (yet another one) CLI wrapper for duplicity to be able to deploy the command in production and inject it into a `cron.daily` and having a hands-off automated backup of production servers. We use it a KE-works to automate our production server backups.
+The primary use case to build this (yet another one) CLI wrapper for duplicity, is to be able to deploy the command in production and inject it into a `cron.daily` and having a hands-off automated backup of production servers. We use it a KE-works to automate our production server backups to Amazon S3.
 
 ## Dependencies
 
-- `duplicity`
-- `python-boto` to connect to S3
+- [duplicity](http://duplicity.nongnu.org/)
+- [python-boto](https://pypi.org/project/boto/) to connect to S3
 
 ## Installation
 
@@ -30,10 +30,10 @@ You can either install this as a system command on any operating system supporti
 To install as global command from PyPI:
 
 ```bash
-python3 -m pip install duplicity-backup-s3
+sudo python3 -m pip install duplicity-backup-s3
 ```
 
-To install for your user only from PyPI
+To install for your user only from PyPI enter the following commmand:
 
 ```bash
 python3 -m pip install --user duplicity-backup-s3
@@ -42,7 +42,7 @@ python3 -m pip install --user duplicity-backup-s3
 To install from the git repository (latest master branch):
 
 ```bash
-python3 -m pip install git+https://github.com/jberends/duplicity_backup.git#wheel=duplicity_backup_s3
+python3 -m pip install --user git+https://github.com/jberends/duplicity_backup.git#wheel=duplicity_backup_s3
 ```
 
 ### First use
@@ -57,7 +57,7 @@ duplicity_backup_s3 --help
 duplicity_backup_s3 init
 ```
 
-It will drop you a `duplcitiy_backyp_s3.yaml` in your current directory. That will look like this:
+It will drop you a `duplicity_backup_s3.yaml` in your current directory. That may look like this:
 
 ```yaml
 aws:
@@ -79,7 +79,7 @@ You can alter the configuration file to your liking. The command will check the 
 
 ### First backup
 
-To call your first backup, which is a full one.
+To perform your first backup, which is a full one, use the following command:
 
 ```bash
 duplicity_backup_s3 incr --verbose
@@ -89,9 +89,9 @@ duplicity_backup_s3 incr --config /path/to/configuation.yaml
 ```
 
 That might take time according to the size of the backup.
-You can see the volumes being uploaded to the [S3 bucket](https://s3.console.aws.amazon.com/s3/home).
+You can see the volumes being uploaded to your configured [S3 bucket](https://s3.console.aws.amazon.com/s3/home) using the S3 console.
 
-To check the backup collection, list and verify the backup you may use:
+To check the backup collection, list and verify the contents of the backup you may use:
 
 ```bash
 # collection status
@@ -106,7 +106,7 @@ duplicity_backup_s3 verify
 
 ### Remove old backups
 
-To remove older backups duplicity provides some commands. We implemented those in the `remove` command. 
+To remove older backups, duplicity provides some commands. We implemented those in the `remove` command. 
 
 ```bash
 # to remove backups older than 7D
@@ -142,12 +142,13 @@ You can alter the crontab in the following way
 - [ ] implement appdirs for default configuration file placement
 - [ ] implement restore for restoring
 - [ ] test on digitalocean
-- [ ] If requested migrate `--s3-european-buckets` to configuration file
+- [x] If requested migrate `--s3-european-buckets` to configuration file
 - [ ] If requested implement GPG/Encryption capabilities. Possibly reusing code of `kecpkg-tools` to manage certificates.
 - [ ] Initialise itself into `cron.daily`
 
 ## Credits
 
 - This package was inspired by the great work done by the duplicity team, back in the days.
-- This package was inspired by the great amount of perl/bash code by the [duplicity_backup.sh](https://github.com/zertrin/duplicity-backup.sh) project.
+- This package was inspired by the great amount of bash code by the [duplicity_backup.sh](https://github.com/zertrin/duplicity-backup.sh) project.
+- This package is thankful on my knees to the great work done by the Authors and contributors behind the [Click](https://click.palletsprojects.com/en/7.x/) project, packing tons of CLI awesomeness since 2014.
 - This package was created with [Cookiecutter](https://github.com/audreyr/cookiecutter) and the [audreyr/cookiecutter-pypackage](https://github.com/audreyr/cookiecutter-pypackage) project template.

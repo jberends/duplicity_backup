@@ -5,7 +5,7 @@ import sys
 import warnings
 from pathlib import Path
 from pprint import pprint
-from typing import Dict, Optional, List
+from typing import Dict, List, Optional, Text, Any
 
 import yaml
 from envparse import env
@@ -68,7 +68,7 @@ class DuplicityS3(object):
         if path is None:
             path = self._config_file
 
-        self._config = {}
+        self._config = {}  # type: ignore
         with self._config_file.open() as fd:
             self._config = yaml.safe_load(fd)
 
@@ -76,10 +76,10 @@ class DuplicityS3(object):
         """AWS secrets either from the environment or from the configuration file."""
         if (
             "aws" in self._config
-            and "AWS_SECRET_ACCESS_KEY" in self._config.get("aws")
-            and "AWS_ACCESS_KEY_ID" in self._config.get("aws")
+            and "AWS_SECRET_ACCESS_KEY" in self._config.get("aws")  # type: ignore
+            and "AWS_ACCESS_KEY_ID" in self._config.get("aws")  # type: ignore
         ):
-            return self._config.get("aws")
+            return self._config.get("aws")  # type: ignore
         else:
             return dict(
                 AWS_ACCESS_KEY_ID=self.env("AWS_ACCESS_KEY_ID", default="")
@@ -137,8 +137,8 @@ class DuplicityS3(object):
         return duplicity_cmd
 
     def get_cludes(
-            self, includes: List[str] = None, excludes: List[str] = None
-        ) -> List[str]:
+        self, includes: List[str] = None, excludes: List[str] = None
+    ) -> List[str]:
         """
         Get includes or excludes command arguments.
 
@@ -148,9 +148,7 @@ class DuplicityS3(object):
         """
         arg_list = []
         if includes:
-            arg_list.extend([
-                "--include={}".format(path) for path in includes
-            ])
+            arg_list.extend(["--include={}".format(path) for path in includes])
         if excludes:
             arg_list.extend(["--exclude={}".format(path) for path in excludes])
         return arg_list
@@ -162,7 +160,7 @@ class DuplicityS3(object):
         :return: error code
         """
         source = self._config.get("backuproot")
-        target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))
+        target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))  # type: ignore
         args = (
             self._args
             + DUPLICITY_BACKUP_ARGS
@@ -204,7 +202,7 @@ class DuplicityS3(object):
         from duplicity_backup_s3.utils import temp_chdir
 
         with temp_chdir() as target:
-            source = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))
+            source = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))  # type: ignore
             args = self._args
             runtime_env = self.get_aws_secrets()
             action = "verify"
@@ -235,7 +233,7 @@ class DuplicityS3(object):
 
         :return: returncode
         """
-        target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))
+        target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))  # type: ignore
         args = self._args
         runtime_env = self.get_aws_secrets()
         action = "cleanup"
@@ -262,7 +260,7 @@ class DuplicityS3(object):
 
         :return: returncode
         """
-        target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))
+        target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))  # type: ignore
         action = "collection-status"
 
         if self.verbose:
@@ -285,7 +283,7 @@ class DuplicityS3(object):
 
         :return: returncode
         """
-        target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))
+        target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))  # type: ignore
         args = self._args
         action = "list-current-files"
 
@@ -319,7 +317,7 @@ class DuplicityS3(object):
             A value of 1 means that only the single most recent backup chain will be kept intact.
             Note that --force will be needed to delete the files instead of just listing them.
         """
-        target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))
+        target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))  # type: ignore
         args = self._args
         action = None
 
