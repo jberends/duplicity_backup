@@ -28,16 +28,26 @@ test_requirements = [
 setup(
     python_requires='>=3.5',
     author="Jochem Berends",
-    author_email="jochem.berends@ke-works.com",
+    author_email="jberends@jbits.nl",
     classifiers=[
-        "Development Status :: 5 - Production",
+        "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
+        "Intended Audience :: System Administrators",
         "License :: OSI Approved :: Apache Software License",
+        "Environment :: Console",
+        "Operating System :: POSIX",
         "Natural Language :: English",
+        "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: Implementation :: PyPy",
+        "Programming Language :: Python :: Implementation :: CPython",
+        "Topic :: System :: Archiving :: Backup"
+        "Topic :: System :: Archiving :: Compression",
+        "Topic :: System :: Archiving :: Mirroring"
     ],
     project_urls={
         'Changelog': 'https://github.com/jberends/duplicity_backup/blob/master/CHANGELOG.md',
