@@ -28,7 +28,7 @@ setup(
     author="Jochem Berends",
     author_email="jochem.berends@ke-works.com",
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: Apache Software License",
         "Natural Language :: English",
@@ -53,7 +53,7 @@ setup(
     setup_requires=setup_requirements,
     test_suite="tests",
     tests_require=test_requirements,
-    url="https://git.ke-works.net/kew/duplicity_backup.git",
+    url="https://github.com/jberends/duplicity_backup",
     version=__version__,
     zip_safe=False,
 )
