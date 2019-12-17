@@ -5,11 +5,9 @@ import sys
 import warnings
 from pathlib import Path
 from pprint import pprint
-from typing import Dict, Optional, List
+from typing import Dict, List
 
 import yaml
-from envparse import env
-
 from duplicity_backup_s3.defaults import (
     FULL_IF_OLDER_THAN,
     DUPLICITY_BACKUP_ARGS,
@@ -20,6 +18,7 @@ from duplicity_backup_s3.defaults import (
     DUPLICITY_DEBUG_VERBOSITY,
 )
 from duplicity_backup_s3.utils import echo_info, echo_failure
+from envparse import env
 
 
 # /bin/duplicity
@@ -38,11 +37,27 @@ from duplicity_backup_s3.utils import echo_info, echo_failure
 
 
 class DuplicityS3(object):
+    """
+    Main object for Duplicity S3 Commands.
+
+    :ivar options: arguments provided to the class
+    :ivar verbose: verbosity level
+    :ivar dry_run: do dry_run only
+    :ivar env: environment object from parse environment
+
+    """
+
     def __init__(self, **options):
-        self._config_file = Path(Path.cwd() / options.get("config"))
-        self.options = options
+        """Initiate of the DuplicityS3 object with options.
+
+        :param options: dictionary with options.
+        :type options: Dict[Any:Any]
+        """
+        self._config_file = Path(Path.cwd() / options.get("config"))  # type: Path
+        self._config = {}  # place holder where the configuration is read in
+        self.options = options  # type: Dict
         self.read_config(path=self._config_file)
-        self.verbose = options.get("verbose", False)
+        self.verbose = options.get("verbose", False)  # type: bool
         # in case of verbosity be more than 3 verbose
         duplicity_verbosity = (
             DUPLICITY_MORE_VERBOSITY if options.get("verbose") else DUPLICITY_VERBOSITY
@@ -50,12 +65,12 @@ class DuplicityS3(object):
         if options.get("debug"):
             duplicity_verbosity = DUPLICITY_DEBUG_VERBOSITY
 
-        self._args = ["-v{}".format(duplicity_verbosity)] + DUPLICITY_BASIC_ARGS
+        self._args = ["-v{}".format(duplicity_verbosity)] + DUPLICITY_BASIC_ARGS  # type: List
 
-        self.dry_run = options.get("dry_run", False)
+        self.dry_run = options.get("dry_run", False)  # type: bool
 
         # setting environment
-        self.env = env
+        self.env = env  # type: 'Env'
         with warnings.catch_warnings():  # catch the warnings that env puts out.
             warnings.simplefilter("ignore", UserWarning)
             self.env.read_envfile()
@@ -67,29 +82,25 @@ class DuplicityS3(object):
         """
         if path is None:
             path = self._config_file
+        if not path.exists():
+            raise ValueError("Could not find the configuration file in path '{}'".format(path))
 
-        self._config = {}
-        with self._config_file.open() as fd:
+        with path.open() as fd:
             self._config = yaml.safe_load(fd)
 
     def get_aws_secrets(self) -> Dict:
         """AWS secrets either from the environment or from the configuration file."""
-        if (
-            "aws" in self._config
-            and "AWS_SECRET_ACCESS_KEY" in self._config.get("aws")
-            and "AWS_ACCESS_KEY_ID" in self._config.get("aws")
-        ):
-            return self._config.get("aws")
+        if "aws" in self._config and "AWS_SECRET_ACCESS_KEY" in self._config.get(
+                "aws") and "AWS_ACCESS_KEY_ID" in self._config.get("aws"):
+            return self._config.get("aws")  # type: ignore
         else:
             return dict(
-                AWS_ACCESS_KEY_ID=self.env("AWS_ACCESS_KEY_ID", default="")
-                or self._config.get("aws"),
+                AWS_ACCESS_KEY_ID=self.env("AWS_ACCESS_KEY_ID", default="") or self._config.get("aws"),
                 AWS_SECRET_ACCESS_KEY=self.env("AWS_SECRET_ACCESS_KEY", default=""),
             )
 
     def _execute(self, *cmd_args, runtime_env: Dict = None) -> int:
         """Execute the duplicity command."""
-
         command = [self.duplicity_cmd(), *cmd_args]
 
         if self.verbose:
@@ -112,7 +123,7 @@ class DuplicityS3(object):
             self.last_results.check_returncode()
         except subprocess.CalledProcessError as e:
             echo_failure(
-                "The duplicity command exitted with an error. Command may not have succeeded."
+                "The duplicity command exited with an error. Command may not have succeeded."
             )
             if self.verbose:
                 echo_info("More information on the error:\n{}".format(e.output))
@@ -136,21 +147,18 @@ class DuplicityS3(object):
 
         return duplicity_cmd
 
-    def get_cludes(
-            self, includes: List[str] = None, excludes: List[str] = None
-        ) -> List[str]:
+    @staticmethod
+    def get_cludes(includes: List[str] = None, excludes: List[str] = None) -> List[str]:
         """
         Get includes or excludes command arguments.
 
         :param includes: list of file includes (absolute paths, not relative from root)
-        :param excludes: list of file exludes (absolute paths, not relative from root)
+        :param excludes: list of file exnludes (absolute paths, not relative from root)
         :return:
         """
         arg_list = []
         if includes:
-            arg_list.extend([
-                "--include={}".format(path) for path in includes
-            ])
+            arg_list.extend(["--include={}".format(path) for path in includes])
         if excludes:
             arg_list.extend(["--exclude={}".format(path) for path in excludes])
         return arg_list
@@ -162,18 +170,14 @@ class DuplicityS3(object):
         :return: error code
         """
         source = self._config.get("backuproot")
-        target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))
+        target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))  # type: ignore
         args = (
-            self._args
-            + DUPLICITY_BACKUP_ARGS
-            + [
+            self._args +
+            DUPLICITY_BACKUP_ARGS + [
                 "--full-if-older-than",
                 self._config.get("full_if_older_than", FULL_IF_OLDER_THAN),
-            ]
-            + self.get_cludes(
-                includes=self._config.get("includes"),
-                excludes=self._config.get("excludes"),
-            )
+            ] +
+            self.get_cludes(includes=self._config.get("includes"), excludes=self._config.get("excludes"))
         )
         runtime_env = self.get_aws_secrets()
         action = "incr"
@@ -184,6 +188,10 @@ class DuplicityS3(object):
         return self._execute(action, *args, source, target, runtime_env=runtime_env)
 
     def do_restore(self) -> int:
+        """Restore the backup.
+
+        This is not implemented yet.
+        """
         raise NotImplementedError("Not yet, bro (https://youtu.be/rLwbzGyC6t4?t=52)")
 
     def do_verify(self) -> int:
@@ -200,11 +208,10 @@ class DuplicityS3(object):
 
         :return: return_code of duplicity
         """
-
         from duplicity_backup_s3.utils import temp_chdir
 
         with temp_chdir() as target:
-            source = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))
+            source = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))  # type: ignore
             args = self._args
             runtime_env = self.get_aws_secrets()
             action = "verify"
@@ -235,7 +242,7 @@ class DuplicityS3(object):
 
         :return: returncode
         """
-        target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))
+        target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))  # type: ignore
         args = self._args
         runtime_env = self.get_aws_secrets()
         action = "cleanup"
@@ -253,7 +260,7 @@ class DuplicityS3(object):
 
     def do_collection_status(self) -> int:
         """
-        Collection status of the backup.
+        Check the status of the collections in backup.
 
         From the docs:
         collection-status <url>
@@ -262,7 +269,7 @@ class DuplicityS3(object):
 
         :return: returncode
         """
-        target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))
+        target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))  # type: ignore
         action = "collection-status"
 
         if self.verbose:
@@ -285,7 +292,7 @@ class DuplicityS3(object):
 
         :return: returncode
         """
-        target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))
+        target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))  # type: ignore
         args = self._args
         action = "list-current-files"
 
@@ -319,7 +326,7 @@ class DuplicityS3(object):
             A value of 1 means that only the single most recent backup chain will be kept intact.
             Note that --force will be needed to delete the files instead of just listing them.
         """
-        target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))
+        target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))  # type: ignore
         args = self._args
         action = None
 

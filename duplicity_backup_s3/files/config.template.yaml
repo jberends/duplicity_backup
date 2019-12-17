@@ -1,0 +1,41 @@
+#
+# This is the duplicity_backup configuration file in yaml
+#
+
+# AWS S3 Access Keys
+# your amazon S3 user that has write right to a backup bucket
+aws:
+  AWS_ACCESS_KEY_ID: foobar_aws_key_id
+  AWS_SECRET_ACCESS_KEY: foobar_aws_access_key
+
+# the backup 'root' path. Everything underneath is considered for backup.
+backuproot: /home
+
+# a list of exclude and include paths. May be '**' to exclude everything except what directories you include
+# excludes:
+#   - "**"
+# includes:
+#   - /home/Pictures
+#   - /home/Music
+
+# backup target
+# S3 Bucket name and path
+remote:
+  bucket: '<an_s3_bucket>'  # S3 bucket name
+  path: '__test'  # subpath within the bucket
+#  s3_european_buckets: False  # if you are backing up to european buckets (Default True)
+#  use-new-style: False  # if you are using old-style buckets, uncomment this line. (Default: True)
+
+# default backup is incremental backup, this option will ensure you create a full backup every 7Days.
+# Other examples: `1M`, `1W`
+full_if_older_than: 7D
+
+#
+# Other Settings
+#
+
+# Path for logging. The filename will be created using system datetime of the run.
+log-path: /var/log/duplicity_backup/
+
+# Volume size
+volsize: 512 # MB. If not provided, defaults to 200 MB.

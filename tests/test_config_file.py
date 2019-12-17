@@ -4,10 +4,17 @@ from unittest import TestCase
 
 from click.testing import CliRunner
 
-from duplicity_backup_s3.utils import check_config_file
+from duplicity_backup_s3.config import check_config_file
 
 
 class TestConfig(TestCase):
+    def test_default_config_provided_by_package(self):
+        from duplicity_backup_s3.defaults import CONFIG_TEMPLATE_PATH
+        from duplicity_backup_s3.defaults import CONFIG_SCHEMA_PATH
+        config_tempate_path = CONFIG_TEMPLATE_PATH
+
+        check_config_file(config_file = config_tempate_path, testing=True)
+
     def test_vanilla_config(self):
         config_yaml = """
         aws:
@@ -112,13 +119,13 @@ class TestConfig(TestCase):
     def test_config_from_production_success(self):
         config_yaml = """
         aws:
-          AWS_ACCESS_KEY_ID: fakekey 
+          AWS_ACCESS_KEY_ID: fakekey
           AWS_SECRET_ACCESS_KEY: fakesecret
         backuproot: /opt/dir/
         includes:
           - /opt/dir/*-media
           - /opt/dir/var/archives
-        excludes: 
+        excludes:
           - "**"
         remote:
           bucket: somebucket

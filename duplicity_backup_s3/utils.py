@@ -1,14 +1,11 @@
 import os
-import sys
 from contextlib import contextmanager
-from pathlib import Path
+from typing import Text
 
 import click
 
-from duplicity_backup_s3.defaults import config_file_schema
 
-
-def echo_success(text, nl=True):
+def echo_success(text: Text, nl: bool = True) -> None:
     """
     Write to the console as a success (Cyan bold).
 
@@ -18,7 +15,7 @@ def echo_success(text, nl=True):
     click.secho(text, fg="cyan", bold=True, nl=nl)
 
 
-def echo_failure(text, nl=True):
+def echo_failure(text: Text, nl: bool = True) -> None:
     """
     Write to the console as a failure (Red bold).
 
@@ -28,7 +25,7 @@ def echo_failure(text, nl=True):
     click.secho(text, fg="red", bold=True, nl=nl)
 
 
-def echo_warning(text, nl=True):
+def echo_warning(text: Text, nl: bool = True) -> None:
     """
     Write to the console as a warning (Yellow bold).
 
@@ -38,7 +35,7 @@ def echo_warning(text, nl=True):
     click.secho(text, fg="yellow", bold=True, nl=nl)
 
 
-def echo_waiting(text, nl=True):
+def echo_waiting(text: Text, nl: bool = True) -> None:
     """
     Write to the console as a waiting (Magenta bold).
 
@@ -48,7 +45,7 @@ def echo_waiting(text, nl=True):
     click.secho(text, fg="magenta", bold=True, nl=nl)
 
 
-def echo_info(text, nl=True):
+def echo_info(text: Text, nl=True):
     """
     Write to the console as a informational (bold).
 
@@ -58,50 +55,12 @@ def echo_info(text, nl=True):
     click.secho(text, bold=True, nl=nl)
 
 
-def check_config_file(config_file, exit=True, verbose=False, testing=False):
-    """Check and return the full absolute Path to the config file other wise exit or return False.
-
-    :param config_file: filename and/or path to the config file
-    :param exit: when exit is true, exit with return_code 2
-    :param testing: in testing mode, no CLI verbosity
-    """
-    config_path = Path(Path.cwd() / config_file)
-    if not config_path.exists():
-        echo_failure(
-            "Config file does not exist in '{}', please provide or "
-            "create an empty one using the command `init`.".format(config_file)
-        )
-        if exit:
-            sys.exit(2)
-        else:
-            return False
-
-    # performing validation
-    from cerberus import Validator
-    import yaml
-
-    with config_path.open() as fd:
-        # try:
-        validator = Validator()
-        validator.allow_unknown = False
-        if not validator.validate(yaml.safe_load(fd), config_file_schema):
-            if not testing:
-                echo_failure(
-                "The configuration file is incorrectly formatted: \n{}".format(validator.errors)
-            )
-            if exit and not testing:
-                sys.exit(2)
-            return validator.errors
-
-    if verbose and not testing:
-        echo_info(
-            "The configuration file is succesfully validated against the validation schema"
-        )
-    return config_path
-
-
 @contextmanager
 def temp_chdir(cwd=None):
+    """Create temporary directory and change to it as a context to operate in.
+
+    :param cwd: current working directory to change back to.
+    """
     from tempfile import TemporaryDirectory
 
     with TemporaryDirectory(prefix="duplicity_s3__") as tempwd:
@@ -112,3 +71,9 @@ def temp_chdir(cwd=None):
             yield tempwd if os.path.exists(tempwd) else ""
         finally:
             os.chdir(origin)
+
+
+def run_as_root() -> bool:
+    """When the user that runs the app is root, return True."""
+    import os
+    return os.geteuid() == 0

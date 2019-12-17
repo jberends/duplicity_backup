@@ -8,15 +8,16 @@ name = "pypi"
 envparse = "*"
 PyYAML = "*"
 cerberus = "*"
+appdirs = "*"
 
 [dev-packages]
 black = "*"
-bumpversion = "*"
-watchdog = "*"
 flake8 = "*"
 tox = "*"
 coverage = "*"
 twine = "*"
+pydocstyle = "*"
+pre-commit = "*"
 
 [requires]
 python_version = "3"
