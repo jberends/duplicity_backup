@@ -45,9 +45,9 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: Implementation :: PyPy",
         "Programming Language :: Python :: Implementation :: CPython",
-        "Topic :: System :: Archiving :: Backup"
+        "Topic :: System :: Archiving :: Backup",
         "Topic :: System :: Archiving :: Compression",
-        "Topic :: System :: Archiving :: Mirroring"
+        "Topic :: System :: Archiving :: Mirroring",
     ],
     project_urls={
         'Changelog': 'https://github.com/jberends/duplicity_backup/blob/master/CHANGELOG.md',
