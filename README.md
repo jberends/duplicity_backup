@@ -14,11 +14,11 @@ Free software: Apache Software License 2.0
 
 ## Features
 
-This is a duplicity command line backup wrapper that will backup to S3 that is using a validated yaml configuration file using modern and awesome CLI patterns. The commands `incremental`, `list files`, `status`, `verify`, `cleanup`, and `remove` are implemented.
+This is a duplicity command line backup wrapper that will backup to S3 that is using a validated yaml configuration file using modern and awesome CLI patterns. The commands `incremental`, `list files`, `status`, `verify`, `cleanup`, `remove` and `init` are implemented.
 
 The primary use case to build this (yet another one) CLI wrapper for duplicity, is to be able to deploy the command in production and inject it into a `cron.daily` and having a hands-off automated backup of production servers. We use it a KE-works to automate our production server backups to Amazon S3.
 
-## Dependencies
+## OS Dependencies
 
 - [duplicity](http://duplicity.nongnu.org/)
 - [python-boto](https://pypi.org/project/boto/) to connect to S3
