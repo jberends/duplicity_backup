@@ -31,16 +31,15 @@ jobs:
 
     - name: Perform Testing
       run: |
-        pip install pytest pytest-runner pytest-cov coverage<=4.5.99
         python setup.py --quiet clean develop
-        pytest --cov=kecpkg tests
+        python setup.py test
 
     - name: Check docs and distribution
       if: matrix.python-version == 3.6
       run: |
-        pip install flake8 pydocstyle check-manifest readme_renderer[md] twine>=2.0.0
+        pip install flake8 pydocstyle check-manifest
 
-        flake8 kecpkg --count --show-source --statistics
+        flake8 duplicity_backup_s3 --count --show-source --statistics
         pydocstyle duplicity_backup_s3
         check-manifest
         python setup.py check -m -s
