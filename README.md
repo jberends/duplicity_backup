@@ -106,7 +106,7 @@ duplicity_backup_s3 verify
 
 ### Remove old backups
 
-To remove older backups, duplicity provides some commands. We implemented those in the `remove` command. 
+To remove older backups, duplicity provides some commands. We implemented those in the `remove` command.
 
 ```bash
 # to remove backups older than 7D

@@ -1,0 +1,48 @@
+# This is the configuration file for the `pre-commit` hook
+#
+# If you want to benefit from this hook, please execute `pre-commit` install using the terminal
+# If you want to run the checks on all files, run `pre-commit run -a` using the terminal
+#
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.4.0
+    hooks:
+    -   id: check-ast
+    -   id: check-case-conflict
+    -   id: check-json
+    -   id: check-merge-conflict
+    -   id: check-vcs-permalinks
+    -   id: check-yaml
+        args: [--allow-multiple-documents]
+    -   id: debug-statements
+    -   id: detect-private-key
+    -   id: end-of-file-fixer
+    -   id: mixed-line-ending
+        args: [--fix=lf]
+    -   id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+-   repo: https://github.com/pre-commit/mirrors-autopep8
+    rev: v1.4.4
+    hooks:
+    -   id: autopep8
+        files: duplicity_backup_s3/.*
+-   repo: https://github.com/PyCQA/pydocstyle
+    rev: 4.0.1
+    hooks:
+    -   id: pydocstyle
+        args:
+        - --ignore=D100,D105,D203,D212,D213
+        files: duplicity_backup_s3/.*
+-   repo: https://gitlab.com/pycqa/flake8
+    rev: 3.7.9
+    hooks:
+    -   id: flake8
+        args:
+        - --ignore=F821,W501,W504
+          # W501: Line break before binary operator
+          # W504: Line break after binary operator
+        files: duplicity_backup_s3/.*
+-   repo: https://github.com/mgedmin/check-manifest
+    rev: '0.40'
+    hooks:
+    -   id: check-manifest

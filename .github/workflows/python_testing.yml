@@ -19,29 +19,21 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Install OS dependencies
-      run: |
-        sudo apt-get install gpg --yes
+#    - name: Install OS dependencies
+#      run: |
+#        sudo apt-get install gpg --yes
 
     - name: Install basic dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -U setuptools>=38.6.0 wheel>=0.31.0
-        pip install -r requirements.txt
+        pip install -r requirements.txt -r requirements_dev.txt
 
     - name: Perform Testing
       run: |
         pip install pytest pytest-runner pytest-cov coverage<=4.5.99
         python setup.py --quiet clean develop
         pytest --cov=kecpkg tests
-
-    - name: Upload coverage to coveralls.io
-      if: matrix.python-version == 3.6
-      env:
-        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-      run: |
-        pip install coveralls
-        coveralls
 
     - name: Check docs and distribution
       if: matrix.python-version == 3.6

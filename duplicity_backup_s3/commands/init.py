@@ -26,7 +26,6 @@ from duplicity_backup_s3.utils import echo_info, echo_failure, echo_success, run
 @click.option("-v", "--verbose", is_flag=True, help="Be more verbose", default=False)
 def init(**options):
     """Initialise an empty configuration file."""
-
     config_path_options = [
         ("1. Current directory", Path.cwd()),
         ("2. User configuration directory", Path(appdirs.user_config_dir)),

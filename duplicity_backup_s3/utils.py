@@ -1,10 +1,11 @@
 import os
 from contextlib import contextmanager
+from typing import Text
 
 import click
 
 
-def echo_success(text, nl=True):
+def echo_success(text: Text, nl: bool = True) -> None:
     """
     Write to the console as a success (Cyan bold).
 
@@ -14,7 +15,7 @@ def echo_success(text, nl=True):
     click.secho(text, fg="cyan", bold=True, nl=nl)
 
 
-def echo_failure(text, nl=True):
+def echo_failure(text: Text, nl: bool = True) -> None:
     """
     Write to the console as a failure (Red bold).
 
@@ -24,7 +25,7 @@ def echo_failure(text, nl=True):
     click.secho(text, fg="red", bold=True, nl=nl)
 
 
-def echo_warning(text, nl=True):
+def echo_warning(text: Text, nl: bool = True) -> None:
     """
     Write to the console as a warning (Yellow bold).
 
@@ -34,7 +35,7 @@ def echo_warning(text, nl=True):
     click.secho(text, fg="yellow", bold=True, nl=nl)
 
 
-def echo_waiting(text, nl=True):
+def echo_waiting(text: Text, nl: bool = True) -> None:
     """
     Write to the console as a waiting (Magenta bold).
 
@@ -44,7 +45,7 @@ def echo_waiting(text, nl=True):
     click.secho(text, fg="magenta", bold=True, nl=nl)
 
 
-def echo_info(text, nl=True):
+def echo_info(text: Text, nl=True):
     """
     Write to the console as a informational (bold).
 
@@ -56,6 +57,10 @@ def echo_info(text, nl=True):
 
 @contextmanager
 def temp_chdir(cwd=None):
+    """Create temporary directory and change to it as a context to operate in.
+
+    :param cwd: current working directory to change back to.
+    """
     from tempfile import TemporaryDirectory
 
     with TemporaryDirectory(prefix="duplicity_s3__") as tempwd:
@@ -68,7 +73,7 @@ def temp_chdir(cwd=None):
             os.chdir(origin)
 
 
-def run_as_root():
-    """When the user that runs the app is root, return True"""
+def run_as_root() -> bool:
+    """When the user that runs the app is root, return True."""
     import os
     return os.geteuid() == 0
