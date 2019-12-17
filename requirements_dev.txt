@@ -1,5 +1,4 @@
 # dev requirements only
-black
 flake8
 tox
 coverage
