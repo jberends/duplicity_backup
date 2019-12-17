@@ -27,7 +27,7 @@ repos:
     -   id: autopep8
         files: duplicity_backup_s3/.*
 -   repo: https://github.com/PyCQA/pydocstyle
-    rev: 4.0.1
+    rev: 5.0.1
     hooks:
     -   id: pydocstyle
         args:
