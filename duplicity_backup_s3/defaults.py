@@ -10,7 +10,7 @@ CONFIG_FILENAME = "duplicity_backup_s3.yaml"
 CONFIG_FILEPATH = Path.cwd() / CONFIG_FILENAME
 
 # Schema to check config file against
-CONFIG_SCHEMA_FILENAME = "schema.yaml"
+CONFIG_SCHEMA_FILENAME = "config_schema.yaml"
 CONFIG_SCHEMA_PATH = Path(Path(__file__).parent / "files" / CONFIG_SCHEMA_FILENAME)
 
 # Default config file to initialise

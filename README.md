@@ -139,7 +139,7 @@ You can alter the crontab in the following way
 
 ## TODO
 
-- [ ] implement appdirs for default configuration file placement
+- [x] implement appdirs for default configuration file placement
 - [ ] implement restore for restoring
 - [ ] test on digitalocean
 - [x] If requested migrate `--s3-european-buckets` to configuration file
