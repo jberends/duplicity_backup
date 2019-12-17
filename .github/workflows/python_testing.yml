@@ -19,9 +19,9 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-#    - name: Install OS dependencies
-#      run: |
-#        sudo apt-get install gpg --yes
+    - name: Install OS dependencies
+      run: |
+        sudo apt-get install duplicity --yes
 
     - name: Install basic dependencies
       run: |
