@@ -7,10 +7,10 @@ jobs:
 
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 7
+      max-parallel: 5
       fail-fast: False
       matrix:
-        python-version: [2.7, 3.5, 3.6, 3.7, 3.8-dev, pypy2, pypy3]
+        python-version: [3.5, 3.6, 3.7, 3.8-dev, pypy3]
 
     steps:
     - uses: actions/checkout@v1
