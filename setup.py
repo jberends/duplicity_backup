@@ -13,7 +13,7 @@ with open("CHANGELOG.md") as history_file:
 
 from duplicity_backup_s3 import __version__
 
-requirements = ["Click>=7.0", "PyYAML", "envparse", "appsdirs", "cerberus"]
+requirements = ["Click>=7.0", "PyYAML", "envparse", "appdirs", "cerberus"]
 
 setup_requirements = []
 
