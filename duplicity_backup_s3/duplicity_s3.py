@@ -151,7 +151,8 @@ class DuplicityS3(object):
 
         return duplicity_cmd
 
-    @staticmethoddef get_cludes(
+    @staticmethod
+    def get_cludes(
          includes: List[str] = None, excludes: List[str] = None
     ) -> List[str]:
         """
