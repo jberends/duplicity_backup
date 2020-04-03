@@ -3,7 +3,7 @@ include LICENSE
 include README.md
 include tox.ini
 include Pipfile
-include Pipfile.lock
+exclude Pipfile.lock
 include .coveragerc
 include .editorconfig
 include .env.template

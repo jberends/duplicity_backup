@@ -36,7 +36,9 @@ ON_WINDOWS = NEED_SUBPROCESS_SHELL = os.name == "nt" or __platform == "Windows"
 
 # Click defaults
 CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"], "max_content_width": 88}
-UNKNOWN_OPTIONS = {"ignore_unknown_options": True}.update(CONTEXT_SETTINGS)  # type: ignore
+UNKNOWN_OPTIONS = {"ignore_unknown_options": True}.update(
+    CONTEXT_SETTINGS
+)  # type: ignore
 
 os.environ["XDG_CONFIG_DIRS"] = "/etc:/usr/local/etc"
 appdirs = AppDirs(appname="duplicity_backup", appauthor="jochem")

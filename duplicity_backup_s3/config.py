@@ -13,7 +13,8 @@ def check_config_file(
     verbose=False,
     testing=False,
 ) -> Optional[Path]:
-    """Validate and return the full absolute Path to the config file otherwise exit or return False.
+    """
+    Validate and return the full absolute Path to the config file.
 
     Will search of the configuration file int he following order:
     1. the current working directory
@@ -26,9 +27,7 @@ def check_config_file(
     :param testing: in testing mode, no CLI verbosity
     :return: Path to the config file
     """
-    config_path = search_config(
-        config_file, path=path, exit=exit and not testing
-    )
+    config_path = search_config(config_file, path=path, exit=exit and not testing)
 
     if not config_path.exists():
         if exit:
@@ -61,7 +60,8 @@ def check_config_file(
 
     if verbose and not testing:
         echo_info(
-            "The configuration file is succesfully validated against the validation schema."
+            "The configuration file is succesfully validated against the "
+            "validation schema."
         )
     return config_path
 
@@ -74,15 +74,18 @@ def search_config(
     """
     Config path searched throughout the filesystem.
 
-    Will look in current directory first, or when path is provided there. When the config_path is provided, then it
-    will not search the current working directory but check for the config_file (filename) in the config_path (dir).
+    Will look in current directory first, or when path is provided there.
+    When the config_path is provided, then it will not search the current
+    working directory but check for the config_file (filename) in the
+    config_path (dir).
 
     Will search of the configuration file int he following order:
     1. the current working directory
     2. the user configuration directory ('~/.config/duplicity_backup/')
     3. the system configuration directory ('~/etc/duplicity_backup/')
 
-    :param config_file: filename or full filepath (:class:`Path`) to search the configuration file in.
+    :param config_file: filename or full filepath (:class:`Path`) to search the
+    configuration file in.
     :param path: (optional) helper path to search the configuration file in.
     :param exit: will exit with returncode 2 if the config file could not be found.
     :return: full :class:`Path` to the configuration file.
@@ -113,7 +116,10 @@ def search_config(
         return Path(Path(appdirs.site_config_dir) / Path(config_file).name)
 
     if exit:
-        echo_failure("Could not find the configuration file. Please give me a hint with the `--config` parameter.")
+        echo_failure(
+            "Could not find the configuration file. Please give me a hint "
+            "with the `--config` parameter."
+        )
         sys.exit(2)
     else:
         # could be a new config_file that does not exist

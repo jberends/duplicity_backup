@@ -19,7 +19,8 @@ from duplicity_backup_s3.utils import echo_info, echo_failure, echo_success, run
 @click.option(
     "-c",
     "--config",
-    help="Config file location. Alternatively set the environment variable: `DUPLICITY_BACKUP_S3_CONFIG`.",
+    help="Config file location. Alternatively set the environment variable: "
+    "`DUPLICITY_BACKUP_S3_CONFIG`.",
     envvar="DUPLICITY_BACKUP_S3_CONFIG",
     default=CONFIG_FILEPATH,
 )
@@ -44,7 +45,8 @@ def init(**options):
     # when choosing root, ensure you run as root
     if choice == 3 and not run_as_root():
         echo_failure(
-            "You need to run this command again with `sudo` rights to manage the system wide configuration."
+            "You need to run this command again with `sudo` rights to manage "
+            "the system wide configuration."
         )
         sys.exit(1)
 
@@ -73,7 +75,8 @@ def init(**options):
     # when choosing root, ensure you run as root
     if choice == 3 and not run_as_root():
         echo_failure(
-            "You need to run this command again with `sudo` rights to manage the system wide configuration."
+            "You need to run this command again with `sudo` rights to manage "
+            "the system wide configuration."
         )
         sys.exit(1)
 
@@ -89,9 +92,8 @@ def init(**options):
     )
 
     if config.exists() and not click.confirm(
-        "Do you want to override an already existing '{}' (original will be backedup as '{}.backup'".format(
-            config.name, config.name
-        )
+        "Do you want to override an already existing '{}' (original will be "
+        "backedup as '{}.backup'".format(config.name, config.name)
     ):
         echo_info("Exiting without overwriting current config file")
         sys.exit(1)
@@ -106,7 +108,8 @@ def init(**options):
 
     # we can alter the default configuration here
     echo_info(
-        "Please answer some basic configuration questions to initialise a working solution."
+        "Please answer some basic configuration questions to initialise "
+        "a working solution."
     )
     default_config["aws"]["AWS_ACCESS_KEY_ID"] = click.prompt(
         "Provide the S3 (Amazon) Access Key ID",

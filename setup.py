@@ -25,7 +25,7 @@ test_requirements = [
 ]
 
 setup(
-    python_requires='>=3.5',
+    python_requires=">=3.5",
     author="Jochem Berends",
     author_email="jberends@jbits.nl",
     classifiers=[
@@ -49,15 +49,16 @@ setup(
         "Topic :: System :: Archiving :: Mirroring",
     ],
     project_urls={
-        'Changelog': 'https://github.com/jberends/duplicity_backup/blob/master/CHANGELOG.md',
-        'Source': 'https://github.com/jberends/duplicity_backup',
-        'Tracker': 'https://github.com/jberends/duplicity_backup/issues',
-        'Readme': 'https://github.com/jberends/duplicity_backup/blob/master/README.md'
+        "Changelog": "https://github.com/jberends/duplicity_backup/blob/master/CHANGELOG.md",
+        "Source": "https://github.com/jberends/duplicity_backup",
+        "Tracker": "https://github.com/jberends/duplicity_backup/issues",
+        "Readme": "https://github.com/jberends/duplicity_backup/blob/master/README.md",
     },
     description="Duplicity backup to S3 for production servers using simple yaml config file.",
     entry_points={
         "console_scripts": (
-            "duplicity_backup_s3 = duplicity_backup_s3.cli:duplicity_backup_s3")
+            "duplicity_backup_s3 = duplicity_backup_s3.cli:duplicity_backup_s3"
+        )
     },
     install_requires=requirements,
     license="Apache Software License 2.0",

@@ -5,9 +5,11 @@ import sys
 import warnings
 from pathlib import Path
 from pprint import pprint
-from typing import Dict, List, Optional, Text, Any
+from typing import Dict, List
 
 import yaml
+from envparse import env
+
 from duplicity_backup_s3.defaults import (
     FULL_IF_OLDER_THAN,
     DUPLICITY_BACKUP_ARGS,
@@ -18,7 +20,6 @@ from duplicity_backup_s3.defaults import (
     DUPLICITY_DEBUG_VERBOSITY,
 )
 from duplicity_backup_s3.utils import echo_info, echo_failure
-from envparse import env
 
 
 # /bin/duplicity
@@ -65,7 +66,9 @@ class DuplicityS3(object):
         if options.get("debug"):
             duplicity_verbosity = DUPLICITY_DEBUG_VERBOSITY
 
-        self._args = ["-v{}".format(duplicity_verbosity)] + DUPLICITY_BASIC_ARGS  # type: List
+        self._args = [
+            "-v{}".format(duplicity_verbosity)
+        ] + DUPLICITY_BASIC_ARGS  # type: List
 
         self.dry_run = options.get("dry_run", False)  # type: bool
 
@@ -83,7 +86,9 @@ class DuplicityS3(object):
         if path is None:
             path = self._config_file
         if not path.exists():
-            raise ValueError("Could not find the configuration file in path '{}'".format(path))
+            raise ValueError(
+                "Could not find the configuration file in path '{}'".format(path)
+            )
 
         self._config = {}  # type: ignore
         with self._config_file.open() as fd:
@@ -99,7 +104,8 @@ class DuplicityS3(object):
             return self._config.get("aws")  # type: ignore
         else:
             return dict(
-                AWS_ACCESS_KEY_ID=self.env("AWS_ACCESS_KEY_ID", default="") or self._config.get("aws"),
+                AWS_ACCESS_KEY_ID=self.env("AWS_ACCESS_KEY_ID", default="")
+                or self._config.get("aws"),
                 AWS_SECRET_ACCESS_KEY=self.env("AWS_SECRET_ACCESS_KEY", default=""),
             )
 
@@ -127,7 +133,8 @@ class DuplicityS3(object):
             self.last_results.check_returncode()
         except subprocess.CalledProcessError as e:
             echo_failure(
-                "The duplicity command exited with an error. Command may not have succeeded."
+                "The duplicity command exited with an error. "
+                "Command may not have succeeded."
             )
             if self.verbose:
                 echo_info("More information on the error:\n{}".format(e.output))
@@ -152,9 +159,7 @@ class DuplicityS3(object):
         return duplicity_cmd
 
     @staticmethod
-    def get_cludes(
-         includes: List[str] = None, excludes: List[str] = None
-    ) -> List[str]:
+    def get_cludes(includes: List[str] = None, excludes: List[str] = None) -> List[str]:
         """
         Get includes or excludes command arguments.
 
@@ -176,14 +181,20 @@ class DuplicityS3(object):
         :return: error code
         """
         source = self._config.get("backuproot")
-        target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))  # type: ignore
+        target = "s3+http://{bucket}/{path}".format(
+            **self._config.get("remote")
+        )  # type: ignore
         args = (
-            self._args +
-            DUPLICITY_BACKUP_ARGS + [
+            self._args
+            + DUPLICITY_BACKUP_ARGS
+            + [
                 "--full-if-older-than",
                 self._config.get("full_if_older_than", FULL_IF_OLDER_THAN),
-            ] +
-            self.get_cludes(includes=self._config.get("includes"), excludes=self._config.get("excludes"))
+            ]
+            + self.get_cludes(
+                includes=self._config.get("includes"),
+                excludes=self._config.get("excludes"),
+            )
         )
         runtime_env = self.get_aws_secrets()
         action = "incr"
@@ -204,20 +215,25 @@ class DuplicityS3(object):
         """Verify the backup.
 
         From the duplicity man page:
-        Verify [--compare-data] [--time <time>] [--file-to-restore <rel_path>] <url> <local_path>
-            Restore backup contents temporarily file by file and compare against the local path’s contents.
-            duplicity will exit with a non-zero error level if any files are different. On verbosity level
-            info (4) or higher, a message for each file that has changed will be logged.
+        Verify [--compare-data] [--time <time>] [--file-to-restore <rel_path>]
+          <url> <local_path>
+            Restore backup contents temporarily file by file and compare against
+            the local path’s contents. Duplicity will exit with a non-zero error
+            level if any files are different. On verbosity level info (4) or
+            higher, a message for each file that has changed will be logged.
 
-            The --file-to-restore option restricts verify to that file or folder. The --time option allows to
-            select a backup to verify against. The --compare-data option enables data comparison.
+            The --file-to-restore option restricts verify to that file or folder.
+            The --time option allows to select a backup to verify against.
+            The --compare-data option enables data comparison.
 
         :return: return_code of duplicity
         """
         from duplicity_backup_s3.utils import temp_chdir
 
         with temp_chdir() as target:
-            source = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))  # type: ignore
+            source = "s3+http://{bucket}/{path}".format(
+                **self._config.get("remote")
+            )  # type: ignore
             args = self._args
             runtime_env = self.get_aws_secrets()
             action = "verify"
@@ -242,13 +258,17 @@ class DuplicityS3(object):
 
         From the duplicity manpage:
         cleanup [--force] [--extra-clean] <url>
-            Delete the extraneous duplicity files on the given backend. Non-duplicity files, or files in complete
-            data sets will not be deleted. This should only be necessary after a duplicity session fails or is
-            aborted prematurely. Note that --force will be needed to delete the files instead of just listing them.
+            Delete the extraneous duplicity files on the given backend.
+            Non-duplicity files, or files in complete data sets will not
+            be deleted. This should only be necessary after a duplicity session
+            fails or is aborted prematurely. Note that --force will be
+            needed to delete the files instead of just listing them.
 
         :return: returncode
         """
-        target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))  # type: ignore
+        target = "s3+http://{bucket}/{path}".format(
+            **self._config.get("remote")
+        )  # type: ignore
         args = self._args
         runtime_env = self.get_aws_secrets()
         action = "cleanup"
@@ -270,12 +290,14 @@ class DuplicityS3(object):
 
         From the docs:
         collection-status <url>
-            Summarize the status of the backup repository by printing the chains and sets found, and the
-            number of volumes in each.
+            Summarize the status of the backup repository by printing the chains
+            and sets found, and the number of volumes in each.
 
         :return: returncode
         """
-        target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))  # type: ignore
+        target = "s3+http://{bucket}/{path}".format(
+            **self._config.get("remote")
+        )  # type: ignore
         action = "collection-status"
 
         if self.verbose:
@@ -291,14 +313,17 @@ class DuplicityS3(object):
 
         from the docs:
         list-current-files [--time <time>] <url>
-            Lists the files contained in the most current backup or backup at time. The information will be
-            extracted from the signature files, not the archive data itself. Thus the whole archive does not
-            have to be downloaded, but on the other hand if the archive has been deleted or corrupted, this
-            command will not detect it.
+            Lists the files contained in the most current backup or backup at
+            time. The information will be extracted from the signature files,
+            not the archive data itself. Thus the whole archive does not have
+            to be downloaded, but on the other hand if the archive has been
+            deleted or corrupted, this command will not detect it.
 
         :return: returncode
         """
-        target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))  # type: ignore
+        target = "s3+http://{bucket}/{path}".format(
+            **self._config.get("remote")
+        )  # type: ignore
         args = self._args
         action = "list-current-files"
 
@@ -315,24 +340,32 @@ class DuplicityS3(object):
 
         From the docs:
         remove-older-than <time> [--force] <url>
-            Delete all backup sets older than the given time. Old backup sets will not be deleted if backup sets
-            newer than time depend on them. See the TIME FORMATS section for more information. Note, this action
-            cannot be combined with backup or other actions, such as cleanup. Note also that --force will be
-            needed to delete the files instead of just listing them.
+            Delete all backup sets older than the given time. Old backup
+            sets will not be deleted if backup sets newer than time depend
+            on them. See the TIME FORMATS section for more information.
+            Note, this action cannot be combined with backup or other
+            actions, such as cleanup. Note also that --force will be needed
+            to delete the files instead of just listing them.
 
         remove-all-but-n-full <count> [--force] <url>
-            Delete all backups sets that are older than the count:th last full backup (in other words, keep the
-            last count full backups and associated incremental sets). count must be larger than zero. A value
-            of 1 means that only the single most recent backup chain will be kept. Note that --force will be
-            needed to delete the files instead of just listing them.
+            Delete all backups sets that are older than the count:th last
+            full backup (in other words, keep the last count full backups
+            and associated incremental sets). count must be larger than zero.
+            A value of 1 means that only the single most recent backup chain
+            will be kept. Note that --force will be needed to delete the f
+            iles instead of just listing them.
 
         remove-all-inc-of-but-n-full <count> [--force] <url>
-            Delete incremental sets of all backups sets that are older than the count:th last full backup (in
-            other words, keep only old full backups and not their increments). count must be larger than zero.
-            A value of 1 means that only the single most recent backup chain will be kept intact.
-            Note that --force will be needed to delete the files instead of just listing them.
+            Delete incremental sets of all backups sets that are older than
+            the count:th last full backup (in other words, keep only old full
+            backups and not their increments). count must be larger than zero.
+            A value of 1 means that only the single most recent backup chain
+            will be kept intact. Note that --force will be needed to delete
+            the files instead of just listing them.
         """
-        target = "s3+http://{bucket}/{path}".format(**self._config.get("remote"))  # type: ignore
+        target = "s3+http://{bucket}/{path}".format(
+            **self._config.get("remote")
+        )  # type: ignore
         args = self._args
         action = None
 

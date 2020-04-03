@@ -5,7 +5,7 @@
 #
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.4.0
+    rev: v2.5.0
     hooks:
     -   id: check-ast
     -   id: check-case-conflict
@@ -21,13 +21,14 @@ repos:
         args: [--fix=lf]
     -   id: trailing-whitespace
         args: [--markdown-linebreak-ext=md]
--   repo: https://github.com/pre-commit/mirrors-autopep8
-    rev: v1.4.4
+-   repo: https://github.com/ambv/black
+    rev: 19.10b0
     hooks:
-    -   id: autopep8
+    -   id: black
+        language_version: python3.7
         files: duplicity_backup_s3/.*
 -   repo: https://github.com/PyCQA/pydocstyle
-    rev: 5.0.1
+    rev: 5.0.2
     hooks:
     -   id: pydocstyle
         args:
@@ -44,11 +45,12 @@ repos:
     hooks:
     -   id: flake8
         args:
-        - --ignore=F821,W501,W504
+        - --ignore=F821,W501,W504,W503
           # W501: Line break before binary operator
+          # W503" line break before :inary operator
           # W504: Line break after binary operator
         files: duplicity_backup_s3/.*
 -   repo: https://github.com/mgedmin/check-manifest
-    rev: '0.40'
+    rev: '0.41'
     hooks:
     -   id: check-manifest

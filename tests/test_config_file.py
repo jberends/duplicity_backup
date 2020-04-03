@@ -11,9 +11,10 @@ class TestConfig(TestCase):
     def test_default_config_provided_by_package(self):
         from duplicity_backup_s3.defaults import CONFIG_TEMPLATE_PATH
         from duplicity_backup_s3.defaults import CONFIG_SCHEMA_PATH
+
         config_tempate_path = CONFIG_TEMPLATE_PATH
 
-        check_config_file(config_file = config_tempate_path, testing=True)
+        check_config_file(config_file=config_tempate_path, testing=True)
 
     def test_vanilla_config(self):
         config_yaml = """
@@ -135,7 +136,5 @@ class TestConfig(TestCase):
             t.write(config_yaml)
             t.flush()
             self.assertEqual(
-                check_config_file(config_file=Path(t.name), testing=True),
-                Path(t.name),
+                check_config_file(config_file=Path(t.name), testing=True), Path(t.name),
             )
-

@@ -33,7 +33,9 @@ class TestDuplicity_s3(TestSetup):
         self.assertIn(__version__, result.output)
 
     def test_with_config(self):
-        cfg_file = Path(Path(__file__).parent / "files" / "duplicity_backup_s3.tests.yaml")
+        cfg_file = Path(
+            Path(__file__).parent / "files" / "duplicity_backup_s3.tests.yaml"
+        )
         result = self.runner.invoke(
             duplicity_backup_s3, "incr --config={} --dry-run".format(cfg_file)
         )
