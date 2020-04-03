@@ -1,0 +1,47 @@
+name: Test duplicity-backup-s3
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 5
+      fail-fast: False
+      matrix:
+        python-version: [3.5, 3.6, 3.7, 3.8-dev, pypy3]
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install OS dependencies
+      run: |
+        sudo apt-get install duplicity --yes
+
+    - name: Install basic dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U setuptools>=38.6.0 wheel>=0.31.0
+        pip install -r requirements.txt -r requirements_dev.txt
+
+    - name: Perform Testing
+      run: |
+        python setup.py --quiet clean develop
+        python setup.py test
+
+    - name: Check docs and distribution
+      if: matrix.python-version == 3.6
+      run: |
+        pip install flake8 pydocstyle check-manifest
+
+        flake8 duplicity_backup_s3 --count --show-source --statistics
+        pydocstyle duplicity_backup_s3
+        check-manifest
+        python setup.py check -m -s
+        python setup.py bdist_wheel --universal
+        twine check dist/*

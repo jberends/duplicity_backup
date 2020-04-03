@@ -1,0 +1,5 @@
+Click>=7.0
+PyYAML
+envparse
+cerberus
+appdirs

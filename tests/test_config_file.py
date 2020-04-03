@@ -119,13 +119,13 @@ class TestConfig(TestCase):
     def test_config_from_production_success(self):
         config_yaml = """
         aws:
-          AWS_ACCESS_KEY_ID: fakekey 
+          AWS_ACCESS_KEY_ID: fakekey
           AWS_SECRET_ACCESS_KEY: fakesecret
         backuproot: /opt/dir/
         includes:
           - /opt/dir/*-media
           - /opt/dir/var/archives
-        excludes: 
+        excludes:
           - "**"
         remote:
           bucket: somebucket

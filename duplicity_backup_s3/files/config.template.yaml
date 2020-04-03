@@ -39,4 +39,3 @@ log-path: /var/log/duplicity_backup/
 
 # Volume size
 volsize: 512 # MB. If not provided, defaults to 200 MB.
-

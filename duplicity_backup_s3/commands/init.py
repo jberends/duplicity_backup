@@ -26,6 +26,34 @@ from duplicity_backup_s3.utils import echo_info, echo_failure, echo_success, run
 @click.option("-v", "--verbose", is_flag=True, help="Be more verbose", default=False)
 def init(**options):
     """Initialise an empty configuration file."""
+    config_path_options = [
+        ("1. Current directory", Path.cwd()),
+        ("2. User configuration directory", Path(appdirs.user_config_dir)),
+        (
+            "3. System configuration directory (only root)",
+            Path(appdirs.site_config_dir),
+        ),
+    ]
+
+    echo_info("Choose the path of the configuration file:")
+    echo_info("\n".join(["{0} ({1})".format(*o) for o in config_path_options]))
+    choice = int(click.prompt("Path", default=1, type=click.Choice(["1", "2", "3"])))
+    _, config_path = config_path_options[choice - 1]
+    echo_success("you choose: {}".format(config_path))
+
+    # when choosing root, ensure you run as root
+    if choice == 3 and not run_as_root():
+        echo_failure(
+            "You need to run this command again with `sudo` rights to manage the system wide configuration."
+        )
+        sys.exit(1)
+
+    # when choosing current dir, let user also choose the name of the config file.
+    config_filename = CONFIG_FILENAME
+    if choice == 1:
+        config_filename = click.prompt(
+            "Filename of the configuration file", default=CONFIG_FILENAME
+        )
 
     config_path_options = [
         ("1. Current directory", Path.cwd()),

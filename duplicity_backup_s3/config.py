@@ -26,7 +26,6 @@ def check_config_file(
     :param testing: in testing mode, no CLI verbosity
     :return: Path to the config file
     """
-
     config_path = search_config(
         config_file, path=path, exit=exit and not testing
     )

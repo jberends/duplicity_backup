@@ -13,7 +13,7 @@ with open("CHANGELOG.md") as history_file:
 
 from duplicity_backup_s3 import __version__
 
-requirements = ["Click>=6.0", "PyYAML", "envparse", "cerberus"]
+requirements = ["Click>=7.0", "PyYAML", "envparse", "appdirs", "cerberus"]
 
 setup_requirements = []
 
@@ -21,24 +21,39 @@ test_requirements = [
     "flake8",
     "tox",
     "coverage",
-    "appdirs",
     "pydocstyle",
 ]
 
 setup(
     python_requires='>=3.5',
     author="Jochem Berends",
-    author_email="jochem.berends@ke-works.com",
+    author_email="jberends@jbits.nl",
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
+        "Intended Audience :: System Administrators",
         "License :: OSI Approved :: Apache Software License",
+        "Environment :: Console",
+        "Operating System :: POSIX",
         "Natural Language :: English",
+        "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: Implementation :: PyPy",
+        "Programming Language :: Python :: Implementation :: CPython",
+        "Topic :: System :: Archiving :: Backup",
+        "Topic :: System :: Archiving :: Compression",
+        "Topic :: System :: Archiving :: Mirroring",
     ],
+    project_urls={
+        'Changelog': 'https://github.com/jberends/duplicity_backup/blob/master/CHANGELOG.md',
+        'Source': 'https://github.com/jberends/duplicity_backup',
+        'Tracker': 'https://github.com/jberends/duplicity_backup/issues',
+        'Readme': 'https://github.com/jberends/duplicity_backup/blob/master/README.md'
+    },
     description="Duplicity backup to S3 for production servers using simple yaml config file.",
     entry_points={
         "console_scripts": (
@@ -55,7 +70,7 @@ setup(
     setup_requires=setup_requirements,
     test_suite="tests",
     tests_require=test_requirements,
-    url="https://git.ke-works.net/kew/duplicity_backup.git",
+    url="https://github.com/jberends/duplicity_backup",
     version=__version__,
     zip_safe=False,
 )

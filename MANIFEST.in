@@ -9,13 +9,16 @@ include .editorconfig
 include .env.template
 include setup.py
 include setup.cfg
+include duplicity_backup_s3.template.yaml
+
+recursive-include duplicity_backup_s3 *.py *.md *.yaml *.yml *.template conf.py Makefile make.bat *.jpg *.png *.gif
 
 recursive-include tests *
 recursive-exclude * __pycache__
 global-exclude *.py[coi]
-exclude .env*
-exclude .idea
+exclude *.sh
+exclude requirements*
+recursive-exclude .idea *
 recursive-exclude .tox *
 recursive-exclude .eggs *
-
-recursive-include duplicity_backup_s3 *.py *.md *.yaml *.yml *.template conf.py Makefile make.bat *.jpg *.png *.gif
+exclude .*
