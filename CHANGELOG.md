@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.1 (3APR20)
+
+* Added appdirs to the setup.py requirements.
+
 ## v1.0.0 (16DEC19)
 First production release
 * implemented appdirs, such that the configuration file can be safely placed and located from a known configuration directory on disk.
