@@ -10,7 +10,7 @@ CONFIG_FILENAME = "duplicity_backup_s3.yaml"
 CONFIG_FILEPATH = Path.cwd() / CONFIG_FILENAME
 
 # Schema to check config file against
-CONFIG_SCHEMA_FILENAME = "config_schema.yaml"
+CONFIG_SCHEMA_FILENAME = "schema.yaml"
 CONFIG_SCHEMA_PATH = Path(Path(__file__).parent / "files" / CONFIG_SCHEMA_FILENAME)
 
 # Default config file to initialise
@@ -36,7 +36,9 @@ ON_WINDOWS = NEED_SUBPROCESS_SHELL = os.name == "nt" or __platform == "Windows"
 
 # Click defaults
 CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"], "max_content_width": 88}
-UNKNOWN_OPTIONS = {"ignore_unknown_options": True}.update(CONTEXT_SETTINGS)  # type: ignore
+UNKNOWN_OPTIONS = {"ignore_unknown_options": True}.update(
+    CONTEXT_SETTINGS
+)  # type: ignore
 
 os.environ["XDG_CONFIG_DIRS"] = "/etc:/usr/local/etc"
 appdirs = AppDirs(appname="duplicity_backup", appauthor="jochem")

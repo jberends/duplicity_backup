@@ -2,6 +2,7 @@
 
 import click
 
+from duplicity_backup_s3.commands.restore import restore
 from duplicity_backup_s3.commands.cleanup import cleanup
 from duplicity_backup_s3.commands.incr import incr
 from duplicity_backup_s3.commands.init import init
@@ -28,7 +29,7 @@ def duplicity_backup_s3():
 
 duplicity_backup_s3.add_command(incr)
 duplicity_backup_s3.add_command(verify)
-# duplicity_backup_s3.add_command(restore)
+duplicity_backup_s3.add_command(restore)
 duplicity_backup_s3.add_command(init)
 duplicity_backup_s3.add_command(cleanup)
 duplicity_backup_s3.add_command(status)

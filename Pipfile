@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-"duplicity-backup-s3" = {editable = true, path = "."}
+duplicity-backup-s3 = {editable = true,path = "."}
 envparse = "*"
 PyYAML = "*"
 cerberus = "*"

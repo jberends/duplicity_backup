@@ -76,4 +76,5 @@ def temp_chdir(cwd=None):
 def run_as_root() -> bool:
     """When the user that runs the app is root, return True."""
     import os
+
     return os.geteuid() == 0
