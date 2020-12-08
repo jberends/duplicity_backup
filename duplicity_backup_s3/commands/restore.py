@@ -26,7 +26,7 @@ from duplicity_backup_s3.duplicity_s3 import DuplicityS3
 )
 @click.option(
     "--target", "target",
-    help=f"Target directory where to restore the files to (is a dir and writable) [default={Path.cwd()}]",
+    help="Target directory where to restore the files to (is a dir and writable) [default={}]".format(Path.cwd()),
     type=click.Path(dir_okay=True, writable=True), default=Path.cwd()
 )
 @click.option("-v", "--verbose", is_flag=True, help="Be more verbose", default=False)
