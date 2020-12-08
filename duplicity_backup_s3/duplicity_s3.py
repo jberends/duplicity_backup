@@ -207,9 +207,37 @@ class DuplicityS3(object):
     def do_restore(self) -> int:
         """Restore the backup.
 
-        This is not implemented yet.
+        From the duplicity man page:
+        restore [--file-to-restore <relpath>] [--time <time>] <url> <target_folder>
+              You can restore the full monty or selected folders/files from
+              a specific time. Use the relative path as it is printed by
+              list-current-files. Usually not needed as duplicity enters
+              restore mode when it detects that the URL comes before the
+              local folder.
+
+        :return: return_code of duplicity
         """
-        raise NotImplementedError("Not yet, bro (https://youtu.be/rLwbzGyC6t4?t=52)")
+        args = self._args
+        action = "restore"
+        runtime_env = self.get_aws_secrets()
+        restore_url = "s3+http://{bucket}/{path}".format(
+            **self._config.get("remote")
+        )  # type: ignore
+        target = self.options.get("target_folder")
+
+        if self.dry_run:
+            args.append("--dry-run")
+
+        if self.options.get("file") is not None:
+            args.extend((["--file-to-restore", self.options.get("file")]))
+
+        if self.options.get("time") is not None:
+            args.extend(["--time", self.options.get("time")])
+
+        if self.verbose:
+            echo_info("restoring backup in directory: {}".format(target))
+
+        return self._execute(action, *args, restore_url, target, runtime_env=runtime_env)
 
     def do_verify(self) -> int:
         """Verify the backup.
