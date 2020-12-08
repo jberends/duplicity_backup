@@ -73,7 +73,7 @@ class DuplicityS3(object):
         self.dry_run = options.get("dry_run", False)  # type: bool
 
         # setting environment
-        self.env = env  # type: "Env"
+        self.env = env
         with warnings.catch_warnings():  # catch the warnings that env puts out.
             warnings.simplefilter("ignore", UserWarning)
             self.env.read_envfile()
