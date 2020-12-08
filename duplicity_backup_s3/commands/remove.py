@@ -18,8 +18,9 @@ from duplicity_backup_s3.config import check_config_file
     "--older-than",
     "time",
     help="Delete all backup sets older than given time. eg. '8h', '7D', '1M', 'now', "
-    "'2019-06-03'. Old backup sets will not be deleted if backup sets newer "
-    "than time depend on them. Use `--force` to actually delete them.",
+    "'2019-06-03', '2020-12-08T21:40:00+01:00'. Old backup sets will not be deleted "
+    "if backup sets newer than time depend on them. Use `--force` to actually "
+    "delete them.",
 )
 @click.option(
     "--all-but-n-full",

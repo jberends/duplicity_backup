@@ -219,11 +219,11 @@ class DuplicityS3(object):
         """
         args = self._args
         action = "restore"
-        runtime_env = self.get_aws_secrets()
-        restore_url = "s3+http://{bucket}/{path}".format(
+        restore_from_url = "s3+http://{bucket}/{path}".format(
             **self._config.get("remote")
         )  # type: ignore
-        target = self.options.get("target_folder")
+        target = self.options.get("target")
+        runtime_env = self.get_aws_secrets()
 
         if self.dry_run:
             args.append("--dry-run")
@@ -237,7 +237,7 @@ class DuplicityS3(object):
         if self.verbose:
             echo_info("restoring backup in directory: {}".format(target))
 
-        return self._execute(action, *args, restore_url, target, runtime_env=runtime_env)
+        return self._execute(action, *args, restore_from_url, target, runtime_env=runtime_env)
 
     def do_verify(self) -> int:
         """Verify the backup.

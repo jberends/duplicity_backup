@@ -22,7 +22,7 @@ from duplicity_backup_s3.duplicity_s3 import DuplicityS3
 @click.option("--file", "--dir", "file", help="File or directory to restore from the backup.")
 @click.option(
     "--time",
-    help="Time of the backup to restore from. eg. '8h', '7D', '1M', 'now', '2019-06-03'",
+    help="Time of the backup to restore from. eg. '8h', '7D', '1M', 'now', '2019-06-03', '2020-12-08T21:40:00+01:00'",
 )
 @click.option(
     "--target", "target",

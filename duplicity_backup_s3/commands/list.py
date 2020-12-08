@@ -16,7 +16,7 @@ from duplicity_backup_s3.duplicity_s3 import DuplicityS3
 )
 @click.option(
     "--time",
-    help="Time of the backup to check. eg. '8h', '7D', '1M', 'now', '2019-06-03'",
+    help="Time of the backup to check. eg. '8h', '7D', '1M', 'now', '2019-06-03', '2020-12-08T21:40:00+01:00'",
 )
 @click.option("-v", "--verbose", is_flag=True, help="Be more verbose", default=False)
 def list(**options):
