@@ -116,6 +116,19 @@ duplicity_backup_s3 remove --older-than 7D
 duplicity_backup_s3 remove --all-but-n-full 4
 ```
 
+### Restore backups
+
+To restore backup we implemented the `restore` command.
+
+```bash
+# to restore backups from yesterday to a current directory
+duplicity_backup_s3 restore --time 1D
+
+# to restore specific subdirectory from a specific date/time to a custom directory
+duplicity_backup_s3 restore --dir specific_subdir \
+    --time 2020-12-08T22:22:00+01:00 --target ~/a_restoredir
+```
+
 ### Using this as daily backup in a cronjob
 
 To use this in a daily cron job, you can alter the `crontab` for the user `root`
@@ -140,7 +153,7 @@ You can alter the crontab in the following way
 ## TODO
 
 - [x] implement appdirs for default configuration file placement
-- [ ] implement restore for restoring
+- [x] implement restore for restoring
 - [ ] test on digitalocean
 - [x] If requested migrate `--s3-european-buckets` to configuration file
 - [ ] If requested implement GPG/Encryption capabilities. Possibly reusing code of `kecpkg-tools` to manage certificates.

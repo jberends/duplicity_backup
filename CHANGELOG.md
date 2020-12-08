@@ -1,10 +1,14 @@
 # Changelog
 
+## v1.1.0 (8DEC20)
+
+* added restore command implementation.
+
 ## v1.0.2 (3APR20)
 
 * Added appdirs to the setup.py requirements.
 
-## v1.0.1 (UNLRELEASED)
+## v1.0.1 (UNRELEASED)
 
 Not released to the public.
 
