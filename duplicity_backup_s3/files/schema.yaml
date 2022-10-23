@@ -12,6 +12,14 @@ aws:
       type: string
     AWS_SECRET_ACCESS_KEY:
       type: string
+gpg:
+  type: dict
+  allow_unknown: false
+  schema:
+    PASSPHRASE:
+      type: string
+    GPG_KEY:
+      type: string
 
 backuproot:
   required: true
@@ -36,6 +44,9 @@ remote:
       type: string
     path:
       required: true
+      type: string
+    endpoint:
+      required: false
       type: string
     s3-european-buckets:
       type: boolean

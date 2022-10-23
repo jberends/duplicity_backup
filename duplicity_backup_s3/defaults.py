@@ -18,10 +18,11 @@ CONFIG_TEMPLATE_FILENAME = "config.template.yaml"
 CONFIG_TEMPLATE_PATH = Path(Path(__file__).parent / "files" / CONFIG_TEMPLATE_FILENAME)
 
 FULL_IF_OLDER_THAN = "7D"
+#DUPLICITY_BASIC_ARGS = [
+#    "--s3-use-new-style",
+#]
 DUPLICITY_BASIC_ARGS = [
-    "--s3-european-buckets",
     "--s3-use-new-style",
-    "--no-encryption",
 ]
 DUPLICITY_BACKUP_ARGS = ["--asynchronous-upload", "--exclude-device-files"]
 DUPLICITY_VERBOSITY = 3
