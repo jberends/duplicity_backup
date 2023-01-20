@@ -22,7 +22,7 @@ jobs:
 
       - name: Install OS dependencies
         run: |
-          sudo apt-get install duplicity --yes
+          sudo apt-get install duplicity --yes -q
 
       - name: Install Python dependencies
         run: |
