@@ -3,6 +3,7 @@ import os
 import subprocess
 import sys
 import warnings
+from enum import Enum
 from pathlib import Path
 from pprint import pprint
 from typing import Dict, List
@@ -20,6 +21,18 @@ from duplicity_backup_s3.defaults import (
     DUPLICITY_DEBUG_VERBOSITY,
 )
 from duplicity_backup_s3.utils import echo_info, echo_failure
+
+
+class Actions(Enum):
+    INCR = "incr"
+    RESTORE = "restore"
+    VERIFY = "verify"
+    CLEANUP = "cleanup"
+    COLLECTION_STATUS = "collection-status"
+    LIST_CURRENT_FILES = "list-current-files"
+    REMOVE_OLDER_THAN = "remove_older_than"
+    REMOVE_ALL_BUT_N_FULL = "remove_all_but_n_full"
+    REMOVE_ALL_INC_BUT_N_FULL = "remove_all_inc_but_n_full"
 
 
 # /bin/duplicity
@@ -174,6 +187,18 @@ class DuplicityS3(object):
             arg_list.extend(["--exclude={}".format(path) for path in excludes])
         return arg_list
 
+    def _construct_remote_uri(self) -> str:
+        """
+        Construct the backup target uri.
+
+        It uses the `self._config` to construct the target URI.
+
+        :return: the full backup target uri.
+        """
+        remote = self._config.get("remote")
+        target = f"s3+http://{remote.get('bucket')}/{remote.get('path')}"
+        return target
+
     def do_incremental(self) -> int:
         """
         Incremental duplicity Backup.
@@ -181,9 +206,7 @@ class DuplicityS3(object):
         :return: error code
         """
         source = self._config.get("backuproot")
-        target = "s3+http://{bucket}/{path}".format(
-            **self._config.get("remote")
-        )  # type: ignore
+        target = self._construct_remote_uri()
         args = (
             self._args
             + DUPLICITY_BACKUP_ARGS
@@ -197,7 +220,7 @@ class DuplicityS3(object):
             )
         )
         runtime_env = self.get_aws_secrets()
-        action = "incr"
+        action = Actions.INCR.value
 
         if self.dry_run:
             args.append("--dry-run")
@@ -218,10 +241,8 @@ class DuplicityS3(object):
         :return: return_code of duplicity
         """
         args = self._args
-        action = "restore"
-        restore_from_url = "s3+http://{bucket}/{path}".format(
-            **self._config.get("remote")
-        )  # type: ignore
+        action = Actions.RESTORE.value
+        restore_from_url = self._construct_remote_uri()
         target = self.options.get("target")
         runtime_env = self.get_aws_secrets()
 
@@ -237,7 +258,9 @@ class DuplicityS3(object):
         if self.verbose:
             echo_info("restoring backup in directory: {}".format(target))
 
-        return self._execute(action, *args, restore_from_url, target, runtime_env=runtime_env)
+        return self._execute(
+            action, *args, restore_from_url, target, runtime_env=runtime_env
+        )
 
     def do_verify(self) -> int:
         """Verify the backup.
@@ -259,12 +282,10 @@ class DuplicityS3(object):
         from duplicity_backup_s3.utils import temp_chdir
 
         with temp_chdir() as target:
-            source = "s3+http://{bucket}/{path}".format(
-                **self._config.get("remote")
-            )  # type: ignore
+            source = self._construct_remote_uri()
             args = self._args
             runtime_env = self.get_aws_secrets()
-            action = "verify"
+            action = Actions.VERIFY.value
 
             if self.dry_run:
                 args.append("--dry-run")
@@ -294,12 +315,10 @@ class DuplicityS3(object):
 
         :return: returncode
         """
-        target = "s3+http://{bucket}/{path}".format(
-            **self._config.get("remote")
-        )  # type: ignore
+        target = self._construct_remote_uri()
         args = self._args
         runtime_env = self.get_aws_secrets()
-        action = "cleanup"
+        action = Actions.CLEANUP.value
 
         if self.dry_run:
             args.append("--dry-run")
@@ -323,10 +342,8 @@ class DuplicityS3(object):
 
         :return: returncode
         """
-        target = "s3+http://{bucket}/{path}".format(
-            **self._config.get("remote")
-        )  # type: ignore
-        action = "collection-status"
+        target = self._construct_remote_uri()
+        action = Actions.COLLECTION_STATUS.value
 
         if self.verbose:
             echo_info("Collection status of the backup in target: '{}'".format(target))
@@ -349,11 +366,9 @@ class DuplicityS3(object):
 
         :return: returncode
         """
-        target = "s3+http://{bucket}/{path}".format(
-            **self._config.get("remote")
-        )  # type: ignore
+        target = self._construct_remote_uri()
         args = self._args
-        action = "list-current-files"
+        action = Actions.LIST_CURRENT_FILES.valye
 
         if self.options.get("time") is not None:
             args.extend(["--time", self.options.get("time")])
@@ -391,19 +406,20 @@ class DuplicityS3(object):
             will be kept intact. Note that --force will be needed to delete
             the files instead of just listing them.
         """
-        target = "s3+http://{bucket}/{path}".format(
-            **self._config.get("remote")
-        )  # type: ignore
+        target = self._construct_remote_uri()
         args = self._args
         action = None
 
         if self.options.get("time") is not None:
-            action = ["remove-older-than", self.options.get("time")]
+            action = [Actions.REMOVE_OLDER_THAN.value, self.options.get("time")]
         if self.options.get("all_but_n_full") is not None:
-            action = ["remove-all-but-n-full", str(self.options.get("all_but_n_full"))]
+            action = [
+                Actions.REMOVE_ALL_BUT_N_FULL.value,
+                str(self.options.get("all_but_n_full")),
+            ]
         if self.options.get("all_incremental_but_n_full") is not None:
             action = [
-                "remove-all-inc-but-n-full",
+                Actions.REMOVE_ALL_INC_BUT_N_FULL.value,
                 str(self.options.get("all_incremental_but_n_full")),
             ]
         if action is None:
