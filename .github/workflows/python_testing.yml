@@ -49,7 +49,7 @@ jobs:
 
           # flake8 duplicity_backup_s3 --count --show-source --statistics
           pydocstyle duplicity_backup_s3
+
           check-manifest
-          python setup.py check -m -s
           python setup.py bdist_wheel --universal
           twine check dist/*
