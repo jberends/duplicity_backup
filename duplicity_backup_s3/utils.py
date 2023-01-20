@@ -83,6 +83,7 @@ def run_as_root() -> bool:
 
 class Actions(Enum):
     """Actions for duplicity."""
+
     INCR = "incr"
     RESTORE = "restore"
     VERIFY = "verify"
