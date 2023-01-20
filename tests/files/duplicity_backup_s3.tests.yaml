@@ -9,4 +9,5 @@ includes:
 remote:
   bucket: ''
   path: ''
+  endpoint: ''
 full_if_older_than: "7D"

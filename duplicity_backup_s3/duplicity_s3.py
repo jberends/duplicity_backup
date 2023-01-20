@@ -1,20 +1,25 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
+
 import os
 import subprocess
 import sys
 import warnings
 from pathlib import Path
 from pprint import pprint
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import yaml
 from envparse import env
 
 from duplicity_backup_s3.defaults import (
-    DUPLICITY_BACKUP_ARGS, DUPLICITY_BASIC_ARGS,
+    DUPLICITY_BACKUP_ARGS,
+    DUPLICITY_BASIC_ARGS,
     DUPLICITY_DEBUG_VERBOSITY,
-    DUPLICITY_MORE_VERBOSITY, DUPLICITY_VERBOSITY,
-    FULL_IF_OLDER_THAN, NEED_SUBPROCESS_SHELL,
+    DUPLICITY_MORE_VERBOSITY,
+    DUPLICITY_VERBOSITY,
+    FULL_IF_OLDER_THAN,
+    NEED_SUBPROCESS_SHELL,
 )
 from duplicity_backup_s3.utils import echo_failure, echo_info
 
@@ -39,9 +44,8 @@ class DuplicityS3(object):
 
     :ivar options: arguments provided to the class
     :ivar verbose: verbosity level
-    :ivar dry_run: do dry_run only
+    :ivar dry_run: boolean flag to do dry_run only
     :ivar env: environment object from parse environment
-
     """
 
     def __init__(self, **options):
@@ -52,36 +56,36 @@ class DuplicityS3(object):
         """
         # setting environment
         self.env = env
-        self._config_file = Path(Path.cwd() / options.get("config"))  # type: Path
-        self._config = {}  # place holder where the configuration is read in
-        self.options = options  # type: Dict
+        self._config_file: Path = Path(Path.cwd() / options.get("config"))
+        self._config: dict = {}  # placeholder where the configuration is read in
+        self.options: dict = options
         self.read_config(path=self._config_file)
-        self.verbose = options.get("verbose", False)  # type: bool
-        self.__PASSPHRASE = "PASSPHRASE"  # A key to be look for in the config
-        self.__GPG_KEY = "GPG_KEY"  # A key to be look for in the config
-        self.__gpg_passphrase = self._read_gpg_secrets().get(self.__PASSPHRASE)
-        self.__gpg_key = self._read_gpg_secrets().get(self.__GPG_KEY)
+        self.verbose: bool = options.get("verbose", False)
+        self.__gpg_passphrase: str = self._get_gpg_secrets().get("PASSPHRASE")
+        self.__gpg_key: str = self._get_gpg_secrets().get("GPG_KEY")
         # in case of verbosity be more than 3 verbose
-        duplicity_verbosity = (
+        duplicity_verbosity: int = (
             DUPLICITY_MORE_VERBOSITY if options.get("verbose") else DUPLICITY_VERBOSITY
         )
         if options.get("debug"):
             duplicity_verbosity = DUPLICITY_DEBUG_VERBOSITY
+            self.verbose = True
 
         self._args = [
-                         "-v{}".format(duplicity_verbosity)
-                     ] + DUPLICITY_BASIC_ARGS  # type: List
+            "-v{}".format(duplicity_verbosity)
+        ] + DUPLICITY_BASIC_ARGS  # type: List
 
-        self.dry_run = options.get("dry_run", False)  # type: bool
+        self.dry_run: bool = options.get("dry_run", False)
 
         with warnings.catch_warnings():  # catch the warnings that env puts out.
             warnings.simplefilter("ignore", UserWarning)
             self.env.read_envfile()
 
     def __runtime_env(self) -> Dict:
-        runtime_env = self.get_aws_secrets()
+        runtime_env = self._get_aws_secrets()
         if self.__gpg_passphrase:
-            runtime_env.update({self.__PASSPHRASE: self.__gpg_passphrase})
+            runtime_env["PASSPHRASE"] = self.__gpg_passphrase
+            runtime_env["GPG_KEY"] = self.__gpg_key
         return runtime_env
 
     def read_config(self, path: Path = None) -> None:
@@ -100,13 +104,9 @@ class DuplicityS3(object):
         with self._config_file.open() as fd:
             self._config = yaml.safe_load(fd)
 
-    def get_aws_secrets(self) -> Dict:
+    def _get_aws_secrets(self) -> Dict:
         """AWS secrets either from the environment or from the configuration file."""
-        if (
-            "aws" in self._config
-            and "AWS_SECRET_ACCESS_KEY" in self._config.get("aws")  # type: ignore
-            and "AWS_ACCESS_KEY_ID" in self._config.get("aws")  # type: ignore
-        ):
+        if "aws" in self._config:
             return self._config.get("aws")  # type: ignore
         else:
             return dict(
@@ -114,7 +114,7 @@ class DuplicityS3(object):
                 AWS_SECRET_ACCESS_KEY=self.env("AWS_SECRET_ACCESS_KEY", default=""),
             )
 
-    def _read_gpg_secrets(self) -> Dict:
+    def _get_gpg_secrets(self) -> Dict:
         """GPG passphrase and public key to encrypt files on remote system.
 
         Either from the environment or from the configuration file.
@@ -123,9 +123,22 @@ class DuplicityS3(object):
             return self._config.get("gpg")
         else:
             return dict(
-                PASSPHRASE=self.env(self.__PASSPHRASEvar, default=""),
-                GPG_KEY=self.env(self.__GPG_KEYvar, default=""),
+                PASSPHRASE=self.env("PASSPHRASE", default=""),
+                GPG_KEY=self.env("GPG_KEY", default=""),
             )
+
+    @property
+    def _endpoint_uri(self) -> Optional[str]:
+        """
+        The endpoint URI from the configuration.
+
+        If `endpoint` is available in the `config > remote` than return this
+        URI, otherwise return None. According to the configuration schema the
+        `endpoint` is optionally part of the `config > remote`
+
+        :return: remote endpoint URI or None when not configured.
+        """
+        return self._config["remote"].get("endpoint")
 
     def _execute(self, *cmd_args, runtime_env: Dict = None) -> int:
         """Execute the duplicity command."""
@@ -133,18 +146,19 @@ class DuplicityS3(object):
 
         if self.verbose:
             print("command used:")
-            print([*cmd_args])
+            command_str = " ".join(command)
+            print(f"   {command_str}")
             print("environment:")
             pprint(
                 [
-                    "{} = {}".format(k, v)
+                    f"{k} = {v}"
                     for k, v in os.environ.items()
                     if ("SECRET" not in k) and (("AWS" in k) or ("DUPLICITY" in k))
                 ]
             )
 
         self.last_results = subprocess.run(
-            command, shell=NEED_SUBPROCESS_SHELL, env=runtime_env
+            command, shell=True, env=runtime_env
         )
 
         try:
@@ -198,11 +212,11 @@ class DuplicityS3(object):
 
         :return: error code
         """
+        action = "incr"
         source = self._config.get("backuproot")
         target = "s3://{bucket}/{path}".format(
             **self._config.get("remote")
         )  # type: ignore
-        endpoint_url = "{endpoint}".format(**self._config.get("remote"))
         args = (
             self._args
             + DUPLICITY_BACKUP_ARGS
@@ -211,18 +225,17 @@ class DuplicityS3(object):
                 self._config.get("full_if_older_than", FULL_IF_OLDER_THAN),
             ]
             + self.get_cludes(
-            includes=self._config.get("includes"),
-            excludes=self._config.get("excludes"),
+                includes=self._config.get("includes"),
+                excludes=self._config.get("excludes"),
+            )
         )
-        )
-        if endpoint_url is not None:
-            args.extend(["--s3-endpoint-url", endpoint_url])
+        if self._endpoint_uri:
+            args.extend(["--s3-endpoint-url", self._endpoint_uri])
 
         if self.__gpg_key:
             args.extend(["--encrypt-key", self.__gpg_key])
         elif not self.__gpg_key and not self.__gpg_passphrase:
             args.append("--no-encryption")
-        action = "incr"
 
         if self.dry_run:
             args.append("--dry-run")
@@ -250,9 +263,9 @@ class DuplicityS3(object):
             **self._config.get("remote")
         )  # type: ignore
         target = self.options.get("target")
-        endpoint_url = "{endpoint}".format(**self._config.get("remote"))
-        if endpoint_url is not None:
-            args.extend(["--s3-endpoint-url", endpoint_url])
+
+        if self._endpoint_uri:
+            args.extend(["--s3-endpoint-url", self._endpoint_uri])
 
         if self.__gpg_key:
             args.extend(["--encrypt-key", self.__gpg_key])
@@ -298,11 +311,12 @@ class DuplicityS3(object):
             source = "s3://{bucket}/{path}".format(
                 **self._config.get("remote")
             )  # type: ignore
-            endpoint_url = "{endpoint}".format(**self._config.get("remote"))
+
             args = self._args
-            if endpoint_url is not None:
-                args.extend(["--s3-endpoint-url", endpoint_url])
-            runtime_env = self.get_aws_secrets()
+            if self._endpoint_uri:
+                args.extend(["--s3-endpoint-url", self._endpoint_uri])
+
+            runtime_env = self._get_aws_secrets()
             action = "verify"
 
             if self.dry_run:
@@ -343,11 +357,10 @@ class DuplicityS3(object):
         target = "s3://{bucket}/{path}".format(
             **self._config.get("remote")
         )  # type: ignore
-        endpoint_url = "{endpoint}".format(**self._config.get("remote"))
         args = self._args
-        if endpoint_url is not None:
-            args.extend(["--s3-endpoint-url", endpoint_url])
-        runtime_env = self.get_aws_secrets()
+        if self._endpoint_uri:
+            args.extend(["--s3-endpoint-url", self._endpoint_uri])
+        runtime_env = self._get_aws_secrets()
         action = "cleanup"
 
         if self.dry_run:
@@ -380,12 +393,11 @@ class DuplicityS3(object):
         target = "s3://{bucket}/{path}".format(
             **self._config.get("remote")
         )  # type: ignore
-        endpoint_url = "{endpoint}".format(**self._config.get("remote"))
         args = self._args
         action = "collection-status"
 
-        if endpoint_url is not None:
-            args.extend(["--s3-endpoint-url", endpoint_url])
+        if self._endpoint_uri:
+            args.extend(["--s3-endpoint-url", self._endpoint_uri])
 
         if self.__gpg_key:
             args.extend(["--encrypt-key", self.__gpg_key])
@@ -416,14 +428,14 @@ class DuplicityS3(object):
         target = "s3://{bucket}/{path}".format(
             **self._config.get("remote")
         )  # type: ignore
-        endpoint_url = "{endpoint}".format(**self._config.get("remote"))
         args = self._args
         action = "list-current-files"
+
         if self.options.get("time") is not None:
             args.extend(["--time", self.options.get("time")])
 
-        if endpoint_url is not None:
-            args.extend(["--s3-endpoint-url", endpoint_url])
+        if self._endpoint_uri:
+            args.extend(["--s3-endpoint-url", self._endpoint_uri])
 
         if self.__gpg_key:
             args.extend(["--encrypt-key", self.__gpg_key])
@@ -468,9 +480,8 @@ class DuplicityS3(object):
         )  # type: ignore
         args = self._args
         action = None
-        endpoint_url = "{endpoint}".format(**self._config.get("remote"))
-        if endpoint_url is not None:
-            args.extend(["--s3-endpoint-url", endpoint_url])
+        if self._endpoint_uri:
+            args.extend(["--s3-endpoint-url", self._endpoint_uri])
         if self.options.get("time") is not None:
             action = ["remove-older-than", self.options.get("time")]
         if self.options.get("all_but_n_full") is not None:

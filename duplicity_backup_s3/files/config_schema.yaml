@@ -45,6 +45,9 @@ remote:
     path:
       required: true
       type: string
+    endpoint:
+      required: false
+      type: string
     s3-european-buckets:
       type: boolean
     use-new-style:

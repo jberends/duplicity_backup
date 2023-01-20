@@ -10,7 +10,7 @@ CONFIG_FILENAME = "duplicity_backup_s3.yaml"
 CONFIG_FILEPATH = Path.cwd() / CONFIG_FILENAME
 
 # Schema to check config file against
-CONFIG_SCHEMA_FILENAME = "schema.yaml"
+CONFIG_SCHEMA_FILENAME = "config_schema.yaml"
 CONFIG_SCHEMA_PATH = Path(Path(__file__).parent / "files" / CONFIG_SCHEMA_FILENAME)
 
 # Default config file to initialise
@@ -18,12 +18,7 @@ CONFIG_TEMPLATE_FILENAME = "config.template.yaml"
 CONFIG_TEMPLATE_PATH = Path(Path(__file__).parent / "files" / CONFIG_TEMPLATE_FILENAME)
 
 FULL_IF_OLDER_THAN = "7D"
-# DUPLICITY_BASIC_ARGS = [
-#    "--s3-use-new-style",
-# ]
-DUPLICITY_BASIC_ARGS = [
-    "--s3-use-new-style",
-]
+DUPLICITY_BASIC_ARGS = ["--s3-use-new-style"]
 DUPLICITY_BACKUP_ARGS = ["--asynchronous-upload", "--exclude-device-files"]
 DUPLICITY_VERBOSITY = 3
 DUPLICITY_MORE_VERBOSITY = DUPLICITY_VERBOSITY + 1

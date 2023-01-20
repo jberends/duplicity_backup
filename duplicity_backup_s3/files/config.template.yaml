@@ -8,7 +8,7 @@ aws:
   AWS_ACCESS_KEY_ID: foobar_aws_key_id
   AWS_SECRET_ACCESS_KEY: foobar_aws_access_key
 gpg:
-  PASSPHRASE: password
+  PASSPHRASE: passphrase
   GPG_KEY: publickey
 # the backup 'root' path. Everything underneath is considered for backup.
 backuproot: /home

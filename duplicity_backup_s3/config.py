@@ -16,7 +16,7 @@ def check_config_file(
     """
     Validate and return the full absolute Path to the config file.
 
-    Will search of the configuration file int he following order:
+    Will search of the configuration file in the following order:
     1. the current working directory
     2. the user configuration directory ('~/.config/duplicity_backup/')
     3. the system configuration directory ('~/etc/duplicity_backup/')
