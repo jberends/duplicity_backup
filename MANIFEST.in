@@ -10,7 +10,7 @@ include setup.py
 include setup.cfg
 include duplicity_backup_s3.template.yaml
 
-recursive-include duplicity_backup_s3 *.py *.typed *.md *.yaml *.yml *.template conf.py Makefile make.bat *.jpg *.png *.gif
+recursive-include duplicity_backup_s3 *.py py.typed *.md *.yaml *.yml *.template conf.py Makefile make.bat *.jpg *.png *.gif
 
 recursive-include tests *
 recursive-exclude * __pycache__
