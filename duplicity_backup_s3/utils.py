@@ -1,5 +1,6 @@
 import os
 from contextlib import contextmanager
+from enum import Enum
 from typing import Text
 
 import click
@@ -78,3 +79,16 @@ def run_as_root() -> bool:
     import os
 
     return os.geteuid() == 0
+
+
+class Actions(Enum):
+    """Actions for duplicity."""
+    INCR = "incr"
+    RESTORE = "restore"
+    VERIFY = "verify"
+    CLEANUP = "cleanup"
+    COLLECTION_STATUS = "collection-status"
+    LIST_CURRENT_FILES = "list-current-files"
+    REMOVE_OLDER_THAN = "remove_older_than"
+    REMOVE_ALL_BUT_N_FULL = "remove_all_but_n_full"
+    REMOVE_ALL_INC_BUT_N_FULL = "remove_all_inc_but_n_full"

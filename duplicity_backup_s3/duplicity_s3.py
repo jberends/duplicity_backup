@@ -3,7 +3,6 @@ import os
 import subprocess
 import sys
 import warnings
-from enum import Enum
 from pathlib import Path
 from pprint import pprint
 from typing import Dict, List
@@ -12,27 +11,15 @@ import yaml
 from envparse import env
 
 from duplicity_backup_s3.defaults import (
-    FULL_IF_OLDER_THAN,
     DUPLICITY_BACKUP_ARGS,
-    DUPLICITY_VERBOSITY,
-    NEED_SUBPROCESS_SHELL,
-    DUPLICITY_MORE_VERBOSITY,
     DUPLICITY_BASIC_ARGS,
     DUPLICITY_DEBUG_VERBOSITY,
+    DUPLICITY_MORE_VERBOSITY,
+    DUPLICITY_VERBOSITY,
+    FULL_IF_OLDER_THAN,
+    NEED_SUBPROCESS_SHELL,
 )
-from duplicity_backup_s3.utils import echo_info, echo_failure
-
-
-class Actions(Enum):
-    INCR = "incr"
-    RESTORE = "restore"
-    VERIFY = "verify"
-    CLEANUP = "cleanup"
-    COLLECTION_STATUS = "collection-status"
-    LIST_CURRENT_FILES = "list-current-files"
-    REMOVE_OLDER_THAN = "remove_older_than"
-    REMOVE_ALL_BUT_N_FULL = "remove_all_but_n_full"
-    REMOVE_ALL_INC_BUT_N_FULL = "remove_all_inc_but_n_full"
+from duplicity_backup_s3.utils import Actions, echo_failure, echo_info
 
 
 # /bin/duplicity
