@@ -158,7 +158,7 @@ class DuplicityS3(object):
             )
 
         self.last_results = subprocess.run(
-            command, shell=True, env=runtime_env
+            command, shell=NEED_SUBPROCESS_SHELL, env=runtime_env
         )
 
         try:
