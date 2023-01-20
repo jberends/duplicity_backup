@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.2.0 (UNRELEASED)
+
+* :star: refactored the target uri to also support digitalocean spaces and other compatible s3 storages.
+
 ## v1.1.0 (8DEC20)
 
 * added restore command implementation.
