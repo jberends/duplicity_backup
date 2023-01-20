@@ -18,9 +18,9 @@ CONFIG_TEMPLATE_FILENAME = "config.template.yaml"
 CONFIG_TEMPLATE_PATH = Path(Path(__file__).parent / "files" / CONFIG_TEMPLATE_FILENAME)
 
 FULL_IF_OLDER_THAN = "7D"
-#DUPLICITY_BASIC_ARGS = [
+# DUPLICITY_BASIC_ARGS = [
 #    "--s3-use-new-style",
-#]
+# ]
 DUPLICITY_BASIC_ARGS = [
     "--s3-use-new-style",
 ]

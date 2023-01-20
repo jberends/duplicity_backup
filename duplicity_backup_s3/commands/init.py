@@ -6,13 +6,11 @@ import yaml
 
 from duplicity_backup_s3.config import check_config_file
 from duplicity_backup_s3.defaults import (
-    CONTEXT_SETTINGS,
-    CONFIG_TEMPLATE_PATH,
-    CONFIG_FILENAME,
+    CONFIG_FILENAME, CONFIG_FILEPATH,
+    CONFIG_TEMPLATE_PATH, CONTEXT_SETTINGS,
     appdirs,
-    CONFIG_FILEPATH,
 )
-from duplicity_backup_s3.utils import echo_info, echo_failure, echo_success, run_as_root
+from duplicity_backup_s3.utils import echo_failure, echo_info, echo_success, run_as_root
 
 
 @click.command(context_settings=CONTEXT_SETTINGS)
@@ -20,7 +18,7 @@ from duplicity_backup_s3.utils import echo_info, echo_failure, echo_success, run
     "-c",
     "--config",
     help="Config file location. Alternatively set the environment variable: "
-    "`DUPLICITY_BACKUP_S3_CONFIG`.",
+         "`DUPLICITY_BACKUP_S3_CONFIG`.",
     envvar="DUPLICITY_BACKUP_S3_CONFIG",
     default=CONFIG_FILEPATH,
 )

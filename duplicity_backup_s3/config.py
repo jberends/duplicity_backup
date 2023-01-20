@@ -1,6 +1,6 @@
 import sys
 from pathlib import Path
-from typing import Union, Text, Optional
+from typing import Optional, Text, Union
 
 from duplicity_backup_s3.defaults import CONFIG_SCHEMA_PATH, appdirs
 from duplicity_backup_s3.utils import echo_failure, echo_info
@@ -41,8 +41,8 @@ def check_config_file(
             return Path(config_path)
 
     # performing validation
-    from cerberus import Validator
     import yaml
+    from cerberus import Validator
 
     validator = Validator()
     validator.allow_unknown = False

@@ -1,8 +1,8 @@
 import click
 
+from duplicity_backup_s3.config import check_config_file
 from duplicity_backup_s3.defaults import CONFIG_FILEPATH, CONTEXT_SETTINGS
 from duplicity_backup_s3.duplicity_s3 import DuplicityS3
-from duplicity_backup_s3.config import check_config_file
 
 
 @click.command(context_settings=CONTEXT_SETTINGS)
@@ -10,7 +10,7 @@ from duplicity_backup_s3.config import check_config_file
     "-c",
     "--config",
     help="Config file location. Alternatively set the environment variable: "
-    "`DUPLICITY_BACKUP_S3_CONFIG`.",
+         "`DUPLICITY_BACKUP_S3_CONFIG`.",
     envvar="DUPLICITY_BACKUP_S3_CONFIG",
     default=CONFIG_FILEPATH,
 )
