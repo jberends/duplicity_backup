@@ -20,7 +20,7 @@ from duplicity_backup_s3.utils import echo_failure, echo_info, echo_success, run
     "-c",
     "--config",
     help="Config file location. Alternatively set the environment variable: "
-         "`DUPLICITY_BACKUP_S3_CONFIG`.",
+    "`DUPLICITY_BACKUP_S3_CONFIG`.",
     envvar="DUPLICITY_BACKUP_S3_CONFIG",
     default=CONFIG_FILEPATH,
 )
@@ -30,19 +30,17 @@ from duplicity_backup_s3.utils import echo_failure, echo_info, echo_success, run
     "--quiet",
     is_flag=True,
     help="Non interactive - be quiet - don't ask questions and create an empty "
-         "configfile here in the current directory.",
+    "configfile here in the current directory.",
     default=False,
 )
 def init(**options):
     """Initialise an empty configuration file."""
-
     # Early bailout when `quiet` flag is set
     if options.get("quiet"):
         import shutil
+
         shutil.copy(CONFIG_TEMPLATE_PATH, Path(Path.cwd() / CONFIG_FILENAME))
-        config = check_config_file(
-            Path(Path.cwd() / CONFIG_FILENAME), exit=True
-        )
+        config = check_config_file(Path(Path.cwd() / CONFIG_FILENAME), exit=True)
         if options.get("verbose"):
             echo_info("Initialising an empty config file in: '{}'".format(config))
         return 0
