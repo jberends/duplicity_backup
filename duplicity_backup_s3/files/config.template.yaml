@@ -7,7 +7,9 @@
 aws:
   AWS_ACCESS_KEY_ID: foobar_aws_key_id
   AWS_SECRET_ACCESS_KEY: foobar_aws_access_key
-
+gpg:
+  PASSPHRASE: password
+  GPG_KEY: publickey
 # the backup 'root' path. Everything underneath is considered for backup.
 backuproot: /home
 
@@ -23,6 +25,7 @@ backuproot: /home
 remote:
   bucket: '<an_s3_bucket>'  # S3 bucket name
   path: '__test'  # subpath within the bucket
+  endpoint: 'https://host' # host to be used as an enpoint
 #  s3_european_buckets: False  # if you are backing up to european buckets (Default True)
 #  use-new-style: False  # if you are using old-style buckets, uncomment this line. (Default: True)
 

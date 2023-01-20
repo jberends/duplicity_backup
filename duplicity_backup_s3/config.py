@@ -60,7 +60,7 @@ def check_config_file(
 
     if verbose and not testing:
         echo_info(
-            "The configuration file is succesfully validated against the "
+            "The configuration file is successfully validated against the "
             "validation schema."
         )
     return config_path
