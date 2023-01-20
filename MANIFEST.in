@@ -1,6 +1,5 @@
-include CHANGELOG.md
+include *.md
 include LICENSE
-include README.md
 include tox.ini
 include Pipfile
 exclude Pipfile.lock
