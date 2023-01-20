@@ -6,7 +6,7 @@ import sys
 import warnings
 from pathlib import Path
 from pprint import pprint
-from typing import Dict, List, Optional
+from typing import List
 
 import yaml
 from envparse import env
@@ -21,7 +21,6 @@ from duplicity_backup_s3.defaults import (
     NEED_SUBPROCESS_SHELL,
 )
 from duplicity_backup_s3.utils import echo_failure, echo_info
-
 
 # /bin/duplicity
 #   -v3
@@ -70,9 +69,7 @@ class DuplicityS3:
             duplicity_verbosity = DUPLICITY_DEBUG_VERBOSITY
             self.verbose = True
 
-        self._args = [
-            f"-v{duplicity_verbosity}"
-        ] + DUPLICITY_BASIC_ARGS  # type: List
+        self._args = [f"-v{duplicity_verbosity}"] + DUPLICITY_BASIC_ARGS  # type: List
 
         self.dry_run: bool = options.get("dry_run", False)
 
@@ -95,9 +92,7 @@ class DuplicityS3:
         if path is None:
             path = self._config_file
         if not path.exists():
-            raise ValueError(
-                f"Could not find the configuration file in path '{path}'"
-            )
+            raise ValueError(f"Could not find the configuration file in path '{path}'")
 
         self._config = {}  # type: ignore
         with self._config_file.open() as fd:
