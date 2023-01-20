@@ -235,7 +235,7 @@ class DuplicityS3:
         args = self._extend_args()
         args.extend(
             [
-                DUPLICITY_BACKUP_ARGS,
+                *DUPLICITY_BACKUP_ARGS,
                 "--full-if-older-than",
                 self._config.get("full_if_older_than", FULL_IF_OLDER_THAN),
                 *self.get_cludes(
