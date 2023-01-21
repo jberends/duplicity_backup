@@ -134,6 +134,26 @@ class DuplicityS3:
         """
         return self._config["remote"].get("endpoint")
 
+    @property
+    def remote_uri(self) -> str:
+        """
+        The remote URL of the backup location.
+
+        Constructed from the `config > remote` settings in the configuration yaml.
+        When an `endpoint` is provided the url is constructed with this url. If not
+        provided the url is assumed to be on amazon s3 and a `s3+http://` is
+        constructed.
+
+        :return: remote url for the backup location.
+        """
+        target_path = f"{self._config['remote'].get('bucket')}/{self._config['remote'].get('path')}"
+        endpoint = self._endpoint_uri
+        if endpoint:
+            target_uri = f"s3://{endpoint}/{target_path}"
+        else:
+            target_uri = f"s3+http://{target_path}"
+        return target_uri
+
     def _extend_args(self, args: list | None = None) -> list:
         """
         Return extended arguments based on the most common arguments.
@@ -229,9 +249,7 @@ class DuplicityS3:
         """
         action = "incr"
         source = self._config.get("backuproot")
-        target = "s3://{bucket}/{path}".format(
-            **self._config.get("remote")
-        )  # type: ignore
+        target = self.remote_uri
         args = self._extend_args()
         args.extend(
             [
@@ -263,9 +281,7 @@ class DuplicityS3:
         :return: return_code of duplicity
         """
         action = "restore"
-        restore_from_url = "s3://{bucket}/{path}".format(
-            **self._config.get("remote")
-        )  # type: ignore
+        restore_from_url = self.remote_uri
         target = self.options.get("target")
         args = self._extend_args()
 
@@ -302,9 +318,7 @@ class DuplicityS3:
         from duplicity_backup_s3.utils import temp_chdir
 
         with temp_chdir() as target:
-            source = "s3://{bucket}/{path}".format(
-                **self._config.get("remote")
-            )  # type: ignore
+            source = self.remote_uri
             action = "verify"
             args = self._extend_args()
 
@@ -335,9 +349,7 @@ class DuplicityS3:
 
         :return: returncode
         """
-        target = "s3://{bucket}/{path}".format(
-            **self._config.get("remote")
-        )  # type: ignore
+        target = self.remote_uri
         args = self._extend_args()
         if self._endpoint_uri:
             args.extend(["--s3-endpoint-url", self._endpoint_uri])
@@ -363,9 +375,7 @@ class DuplicityS3:
 
         :return: returncode
         """
-        target = "s3://{bucket}/{path}".format(
-            **self._config.get("remote")
-        )  # type: ignore
+        target = self.remote_uri
         action = "collection-status"
         args = self._extend_args()
 
@@ -388,9 +398,7 @@ class DuplicityS3:
 
         :return: returncode
         """
-        target = "s3://{bucket}/{path}".format(
-            **self._config.get("remote")
-        )  # type: ignore
+        target = self.remote_uri
         args = self._extend_args()
         action = "list-current-files"
 
@@ -430,9 +438,7 @@ class DuplicityS3:
             will be kept intact. Note that --force will be needed to delete
             the files instead of just listing them.
         """
-        target = "s3://{bucket}/{path}".format(
-            **self._config.get("remote")
-        )  # type: ignore
+        target = self.remote_uri
         args = self._extend_args()
         action = None
 
