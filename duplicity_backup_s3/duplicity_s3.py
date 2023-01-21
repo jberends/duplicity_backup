@@ -165,8 +165,11 @@ class DuplicityS3:
         """
         if args is None or not isinstance(args, (list, tuple)):
             args = self._args
-        if self._endpoint_uri:
-            args.extend(["--s3-endpoint-url", self._endpoint_uri])
+        # TODO: not supported in older style duplicity (version 0.7.19 not) need
+        #  to refactor to make this version dependend as the new s3:// url
+        #  constructor does not work.
+        # if self._endpoint_uri:
+        #     args.extend(["--s3-endpoint-url", self._endpoint_uri])
         if self.__gpg_key:
             args.extend(["--encrypt-key", self.__gpg_key])
         elif not self.__gpg_key and not self.__gpg_passphrase:
