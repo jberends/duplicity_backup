@@ -4,4 +4,4 @@
 
 __author__ = """Jochem Berends"""
 __email__ = "jberends@jbits.nl"
-__version__ = "1.2.0-rc.1"
+__version__ = "1.2.0"

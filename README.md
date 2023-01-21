@@ -154,10 +154,10 @@ You can alter the crontab in the following way
 
 - [x] implement appdirs for default configuration file placement
 - [x] implement restore for restoring
-- [ ] test on digitalocean
+- [x] Allow for custom s3 storage endpoints. Included in v1.2.0 with thanks to @denismatveev
 - [x] If requested migrate `--s3-european-buckets` to configuration file
-- [ ] If requested implement GPG/Encryption capabilities. Possibly reusing code of `kecpkg-tools` to manage certificates.
-- [ ] Initialise itself into `cron.daily`
+- [x] If requested implement GPG/Encryption capabilities. Possibly reusing code of `kecpkg-tools` to manage certificates. Included in v1.2.0 with thanks at @denismatveev
+
 
 ## Credits
 
