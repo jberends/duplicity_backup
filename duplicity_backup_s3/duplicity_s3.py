@@ -54,13 +54,13 @@ class DuplicityS3:
         """
         # setting environment
         self.env = env
-        self._config_file: Path = Path(Path.cwd() / options.get("config"))
-        self._config: dict = {}  # placeholder where the configuration is read in
+        self._config_file = None
+        self._config: dict = {}
         self.options: dict = options
-        self.read_config(path=self._config_file)
+        if "config" in options:
+            self._config_file: Path = Path(Path.cwd() / options.get("config"))
+            self.read_config(path=self._config_file)
         self.verbose: bool = options.get("verbose", False)
-        self.__gpg_passphrase: str = self._get_gpg_secrets().get("PASSPHRASE")
-        self.__gpg_key: str = self._get_gpg_secrets().get("GPG_KEY")
         # in case of verbosity be more than 3 verbose
         duplicity_verbosity: int = (
             DUPLICITY_MORE_VERBOSITY if options.get("verbose") else DUPLICITY_VERBOSITY
@@ -79,9 +79,9 @@ class DuplicityS3:
 
     def __runtime_env(self) -> dict:
         runtime_env = self._get_aws_secrets()
-        if self.__gpg_passphrase:
-            runtime_env["PASSPHRASE"] = self.__gpg_passphrase
-            runtime_env["GPG_KEY"] = self.__gpg_key
+        if self._get_gpg_secrets():
+            runtime_env["PASSPHRASE"] = self._get_gpg_secrets().get("PASSPHRASE")
+            runtime_env["GPG_KEY"] = self._get_gpg_secretzs().get("GPG_KEY")
         return runtime_env
 
     def read_config(self, path: Path = None) -> None:
@@ -112,14 +112,25 @@ class DuplicityS3:
         """GPG passphrase and public key to encrypt files on remote system.
 
         Either from the environment or from the configuration file.
+        Will always return a dict. The dict is empty, without any keys when
+        no PASSPHRASE and/or GPG_KEY are provided.
+
+        The PASSPHRASE and GPG_KEY are always coming from EITHER the configuration
+        yaml file OR the environment and cannot be mixed. When the configuration YAML
+        does not provide both, you may assume that duplicity throws an error.
+
+        :returns: dict with 2 keys "PASSPHRASE" and "GPG_KEY" when they are provided
+            otherwise an empty dict.
         """
         if "gpg" in self._config:
             return self._config.get("gpg")
-        else:
+        elif self.env("PASSPHRASE", default=False):
             return dict(
                 PASSPHRASE=self.env("PASSPHRASE", default=""),
                 GPG_KEY=self.env("GPG_KEY", default=""),
             )
+        else:
+            return dict()
 
     @property
     def _endpoint_uri(self) -> str | None:
@@ -140,18 +151,28 @@ class DuplicityS3:
         The remote URL of the backup location.
 
         Constructed from the `config > remote` settings in the configuration yaml.
+
+        When an `uri` is provided in the yaml it assumes that this uri is carefully
+        constucted by the user and this uri is the full target uri for the duplicity
+        command. It may be used as target_url or source_url in backups and restores.
+
         When an `endpoint` is provided the url is constructed with this url. If not
         provided the url is assumed to be on amazon s3 and a `s3+http://` is
         constructed.
 
         :return: remote url for the backup location.
         """
-        target_path = f"{self._config['remote'].get('bucket')}/{self._config['remote'].get('path')}"
-        endpoint = self._endpoint_uri
+        remote = self._config["remote"]
+        # fast bail when an URI is provided.
+        if "uri" in self._config["remote"]:
+            return remote.get("uri")
+        bucket = self._config["remote"].get("bucket")
+        path = self._config["remote"].get("path")
+        endpoint = self._config["remote"].get("endpoint")
         if endpoint:
-            target_uri = f"s3://{endpoint}/{target_path}"
+            target_uri = f"s3://{endpoint}/{bucket}/{path}"
         else:
-            target_uri = f"s3+http://{target_path}"
+            target_uri = f"s3+http://{bucket}/{path}"
         return target_uri
 
     def _extend_args(self, args: list | None = None) -> list:
@@ -170,12 +191,22 @@ class DuplicityS3:
         #  constructor does not work.
         # if self._endpoint_uri:
         #     args.extend(["--s3-endpoint-url", self._endpoint_uri])
-        if self.__gpg_key:
-            args.extend(["--encrypt-key", self.__gpg_key])
-        elif not self.__gpg_key and not self.__gpg_passphrase:
+        if self._get_gpg_secrets().get("GPG_KEY", False):
+            args.extend(["--encrypt-key", self._get_gpg_secrets().get("GPG_KEY")])
+        elif not self._get_gpg_secrets():
             args.append("--no-encryption")
         if self.dry_run:
             args.append("--dry-run")
+        if self._config["remote"].get("s3-european-buckets", True):
+            # Default added. May be suppressed in config.
+            args.append("--s3-european-buckets")
+        if self._config["remote"].get("use-new-style", True):
+            # Default added. May be suppressed in config.
+            args.append("--s3-use-new-style")
+
+        # add additional argument that are passable to duplicity.
+        if self._config.get("extra_args") and isinstance(self._config.get("extra_args"), list):
+            args.extend(self._config["extra_args"])
         return args
 
     def _execute(self, *cmd_args, runtime_env: dict = None) -> int:
@@ -354,9 +385,6 @@ class DuplicityS3:
         """
         target = self.remote_uri
         args = self._extend_args()
-        if self._endpoint_uri:
-            args.extend(["--s3-endpoint-url", self._endpoint_uri])
-
         action = "cleanup"
 
         if self.options.get("force"):

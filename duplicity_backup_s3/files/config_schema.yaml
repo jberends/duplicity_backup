@@ -38,12 +38,16 @@ includes:
 remote:
   required: true
   type: dict
+  allow_unknown: false
   schema:
+    uri:
+      required: false
+      type: string
     bucket:
-      required: true
+      required: false
       type: string
     path:
-      required: true
+      required: false
       type: string
     endpoint:
       required: false
@@ -61,3 +65,9 @@ log-path:
 
 volsize:
   type: integer
+
+extra_args:
+  type: list
+  required: false
+  schema:
+    type: string
