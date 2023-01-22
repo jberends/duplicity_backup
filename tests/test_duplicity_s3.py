@@ -107,7 +107,12 @@ class TestDuplicityS3Klass(TestCase):
             ("tahoe://", "alias", "/directory"),
             ("webdav://user:password@other.host", "", "/some_dir"),
             ("webdavs://user:password@other.host", "", "/some_dir"),
-            ("host", "bucket_name", "/prefix", "s3://host/bucket_name/prefix"),  # full uri
+            (
+                "host",
+                "bucket_name",
+                "/prefix",
+                "s3://host/bucket_name/prefix",  # full uri
+            ),
         }
 
         def _construct_config(triple: tuple) -> dict:
