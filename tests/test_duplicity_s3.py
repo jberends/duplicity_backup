@@ -100,7 +100,6 @@ class TestDuplicityS3Klass(TestCase):
                 "/some_dir",
                 "rsync://user:password@other.host:port::/module/some_dir",  # full uri
             ),
-            ("", "bucket_name", "/prefix", "s3+http://bucket_name/prefix"),  # full uri
             ("s3://other.host:port/", "bucket_name", "/prefix"),
             ("scp://user:password@other.host:port", "", "/some_dir"),
             ("ssh://user:password@other.host:port", "", "/some_dir"),
@@ -108,6 +107,7 @@ class TestDuplicityS3Klass(TestCase):
             ("tahoe://", "alias", "/directory"),
             ("webdav://user:password@other.host", "", "/some_dir"),
             ("webdavs://user:password@other.host", "", "/some_dir"),
+            ("host", "bucket_name", "/prefix", "s3://host/bucket_name/prefix"),  # full uri
         }
 
         def _construct_config(triple: tuple) -> dict:
