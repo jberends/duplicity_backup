@@ -25,7 +25,7 @@ test_requirements = [
 ]
 
 setup(
-    python_requires=">=3.5",
+    python_requires=">=3.7",
     author="Jochem Berends",
     author_email="jberends@jbits.nl",
     classifiers=[
