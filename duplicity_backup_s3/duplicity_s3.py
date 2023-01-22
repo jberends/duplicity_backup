@@ -82,7 +82,7 @@ class DuplicityS3:
         runtime_env = self._get_aws_secrets()
         if self._get_gpg_secrets():
             runtime_env["PASSPHRASE"] = self._get_gpg_secrets().get("PASSPHRASE")
-            runtime_env["GPG_KEY"] = self._get_gpg_secretzs().get("GPG_KEY")
+            runtime_env["GPG_KEY"] = self._get_gpg_secrets().get("GPG_KEY")
         return runtime_env
 
     def read_config(self, path: Path = None) -> None:
@@ -164,11 +164,10 @@ class DuplicityS3:
         :return: remote url for the backup location.
         """
         remote = self._config["remote"]
-        # fast bail when an URI is provided.
+        # fast bail when a URI is provided.
         if "uri" in self._config["remote"]:
             return remote.get("uri")
 
-        remote_str = bucket_str = path_str = ""
         bucket = bucket_str = self._config["remote"].get("bucket")
         path = path_str = self._config["remote"].get("path")
         endpoint = endpoint_str = self._config["remote"].get("endpoint")

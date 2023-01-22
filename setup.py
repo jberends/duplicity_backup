@@ -3,7 +3,7 @@
 
 """The setup script."""
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 with open("README.md") as readme_file:
     readme = readme_file.read()
@@ -50,13 +50,16 @@ setup(
         "Topic :: System :: Archiving :: Mirroring",
     ],
     project_urls={
-        "Changelog": "https://github.com/jberends/duplicity_backup/blob/master/CHANGELOG.md",
-        "Contributors": "https://github.com/jberends/duplicity_backup/blob/master/CONTRIBUTORS.md",
+        "Changelog": "https://github.com/jberends/duplicity_backup/blob/master/"
+                     "CHANGELOG.md",
+        "Contributors": "https://github.com/jberends/duplicity_backup/blob/master/"
+                        "CONTRIBUTORS.md",
         "Source": "https://github.com/jberends/duplicity_backup",
         "Tracker": "https://github.com/jberends/duplicity_backup/issues",
         "Readme": "https://github.com/jberends/duplicity_backup/blob/master/README.md",
     },
-    description="Duplicity backup to S3 for production servers using simple yaml config file.",
+    description="Duplicity backup to S3 for production servers using simple yaml "
+                "config file.",
     entry_points={
         "console_scripts": (
             "duplicity_backup_s3 = duplicity_backup_s3.cli:duplicity_backup_s3"
