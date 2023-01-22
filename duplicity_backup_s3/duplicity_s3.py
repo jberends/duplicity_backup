@@ -7,6 +7,7 @@ import warnings
 from pathlib import Path
 from pprint import pprint
 from typing import List
+from urllib.parse import urlsplit
 
 import yaml
 from envparse import env
@@ -166,13 +167,31 @@ class DuplicityS3:
         # fast bail when an URI is provided.
         if "uri" in self._config["remote"]:
             return remote.get("uri")
-        bucket = self._config["remote"].get("bucket")
-        path = self._config["remote"].get("path")
-        endpoint = self._config["remote"].get("endpoint")
-        if endpoint:
-            target_uri = f"s3://{endpoint}/{bucket}/{path}"
-        else:
-            target_uri = f"s3+http://{bucket}/{path}"
+
+        remote_str = bucket_str = path_str = ""
+        bucket = bucket_str = self._config["remote"].get("bucket")
+        path = path_str = self._config["remote"].get("path")
+        endpoint = endpoint_str = self._config["remote"].get("endpoint")
+
+        if endpoint and bucket:
+            endpoint_str = f"{endpoint}/" if not endpoint.endswith("/") else endpoint
+        if not path.startswith("/"):
+            if path and bucket:
+                path_str = f"/{path}" if not bucket_str.endswith("/") else path
+            if path and endpoint and not bucket:
+                path_str = f"/{path}" if not endpoint_str.endswith("/") else path
+
+        # construct target_uri from the '*_str'
+        target_uri = "".join((endpoint_str, bucket_str, path_str))
+        if not endpoint:
+            target_uri = f"s3+http://{target_uri}"
+
+        # check if endpoint has a scheme in it. If not prepend s3://
+        scheme = urlsplit(target_uri).scheme
+        if not scheme:
+            print(urlsplit(target_uri))
+            target_uri = f"s3://{target_uri}"
+
         return target_uri
 
     def _extend_args(self, args: list | None = None) -> list:
@@ -205,7 +224,9 @@ class DuplicityS3:
             args.append("--s3-use-new-style")
 
         # add additional argument that are passable to duplicity.
-        if self._config.get("extra_args") and isinstance(self._config.get("extra_args"), list):
+        if self._config.get("extra_args") and isinstance(
+            self._config.get("extra_args"), list
+        ):
             args.extend(self._config["extra_args"])
         return args
 
