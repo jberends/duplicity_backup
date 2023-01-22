@@ -2,16 +2,16 @@
 
 import click
 
-from duplicity_backup_s3.commands.restore import restore
+from duplicity_backup_s3 import __version__
 from duplicity_backup_s3.commands.cleanup import cleanup
 from duplicity_backup_s3.commands.incr import incr
 from duplicity_backup_s3.commands.init import init
 from duplicity_backup_s3.commands.list import list as list_files
 from duplicity_backup_s3.commands.remove import remove
+from duplicity_backup_s3.commands.restore import restore
 from duplicity_backup_s3.commands.status import status
 from duplicity_backup_s3.commands.verify import verify
 from duplicity_backup_s3.defaults import CONTEXT_SETTINGS
-from duplicity_backup_s3 import __version__
 
 
 class AliasedGroup(click.Group):

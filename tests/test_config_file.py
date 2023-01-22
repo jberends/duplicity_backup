@@ -85,7 +85,6 @@ class TestConfig(TestCase):
         aws:
           AWS_ACCESS_KEY_ID: foobar_aws_key_id
           AWS_SECRET_ACCESS_KEY: foobar_aws_access_key
-        backuproot: /home
         remote:
           path: '__test'
         full_if_older_than: 7D
@@ -95,7 +94,7 @@ class TestConfig(TestCase):
             t.flush()
             self.assertDictEqual(
                 check_config_file(config_file=Path(t.name), testing=True),
-                {"remote": [{"bucket": ["required field"]}]},
+                {'backuproot': ['required field']},
             )
 
     def test_incorrect_value_type_fails(self):

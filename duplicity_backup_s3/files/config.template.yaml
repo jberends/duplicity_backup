@@ -8,7 +8,7 @@ aws:
   AWS_ACCESS_KEY_ID: foobar_aws_key_id
   AWS_SECRET_ACCESS_KEY: foobar_aws_access_key
 gpg:
-  PASSPHRASE: password
+  PASSPHRASE: passphrase
   GPG_KEY: publickey
 # the backup 'root' path. Everything underneath is considered for backup.
 backuproot: /home
@@ -23,14 +23,17 @@ backuproot: /home
 # backup target
 # S3 Bucket name and path
 remote:
+  ## you can choose either a full 'uri' or provide a custom endpoint/bucket/path
+  # uri: 's3://compatible.storage.provider.com/bucketname/path'
+  ## or
   bucket: '<an_s3_bucket>'  # S3 bucket name
   path: '__test'  # subpath within the bucket
-  endpoint: 'https://host' # host to be used as an enpoint
-#  s3_european_buckets: False  # if you are backing up to european buckets (Default True)
-#  use-new-style: False  # if you are using old-style buckets, uncomment this line. (Default: True)
+  endpoint: 'host' # host to be used as an endpoint
+  #  s3_european_buckets: False  # if you are backing up to european buckets (Default True)
+  #  use-new-style: False  # if you are using old-style buckets, uncomment this line. (Default: True)
 
 # default backup is incremental backup, this option will ensure you create a full backup every 7Days.
-# Other examples: `1M`, `1W`
+# Other examples: `1M`, `1W`, `7D`
 full_if_older_than: 7D
 
 #
@@ -42,3 +45,8 @@ log-path: /var/log/duplicity_backup/
 
 # Volume size
 volsize: 512 # MB. If not provided, defaults to 200 MB.
+
+# Optional extra arguments that are passed to duplicity may be passed here as an array
+# extra_args:
+#  - --help
+#  - --more-arguments-here-as-a-list

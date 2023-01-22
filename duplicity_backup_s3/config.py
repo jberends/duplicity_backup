@@ -1,6 +1,6 @@
 import sys
 from pathlib import Path
-from typing import Union, Text, Optional
+from typing import Optional, Text, Union
 
 from duplicity_backup_s3.defaults import CONFIG_SCHEMA_PATH, appdirs
 from duplicity_backup_s3.utils import echo_failure, echo_info
@@ -16,7 +16,7 @@ def check_config_file(
     """
     Validate and return the full absolute Path to the config file.
 
-    Will search of the configuration file int he following order:
+    Will search of the configuration file in the following order:
     1. the current working directory
     2. the user configuration directory ('~/.config/duplicity_backup/')
     3. the system configuration directory ('~/etc/duplicity_backup/')
@@ -41,8 +41,8 @@ def check_config_file(
             return Path(config_path)
 
     # performing validation
-    from cerberus import Validator
     import yaml
+    from cerberus import Validator
 
     validator = Validator()
     validator.allow_unknown = False

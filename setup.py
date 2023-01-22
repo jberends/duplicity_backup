@@ -3,7 +3,7 @@
 
 """The setup script."""
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 with open("README.md") as readme_file:
     readme = readme_file.read()
@@ -25,7 +25,7 @@ test_requirements = [
 ]
 
 setup(
-    python_requires=">=3.5",
+    python_requires=">=3.7",
     author="Jochem Berends",
     author_email="jberends@jbits.nl",
     classifiers=[
@@ -38,10 +38,11 @@ setup(
         "Natural Language :: English",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: Implementation :: PyPy",
         "Programming Language :: Python :: Implementation :: CPython",
         "Topic :: System :: Archiving :: Backup",
@@ -49,12 +50,16 @@ setup(
         "Topic :: System :: Archiving :: Mirroring",
     ],
     project_urls={
-        "Changelog": "https://github.com/jberends/duplicity_backup/blob/master/CHANGELOG.md",
+        "Changelog": "https://github.com/jberends/duplicity_backup/blob/master/"
+                     "CHANGELOG.md",
+        "Contributors": "https://github.com/jberends/duplicity_backup/blob/master/"
+                        "CONTRIBUTORS.md",
         "Source": "https://github.com/jberends/duplicity_backup",
         "Tracker": "https://github.com/jberends/duplicity_backup/issues",
         "Readme": "https://github.com/jberends/duplicity_backup/blob/master/README.md",
     },
-    description="Duplicity backup to S3 for production servers using simple yaml config file.",
+    description="Duplicity backup to S3 for production servers using simple yaml "
+                "config file.",
     entry_points={
         "console_scripts": (
             "duplicity_backup_s3 = duplicity_backup_s3.cli:duplicity_backup_s3"

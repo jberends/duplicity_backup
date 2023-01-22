@@ -6,13 +6,13 @@ import yaml
 
 from duplicity_backup_s3.config import check_config_file
 from duplicity_backup_s3.defaults import (
-    CONTEXT_SETTINGS,
-    CONFIG_TEMPLATE_PATH,
     CONFIG_FILENAME,
-    appdirs,
     CONFIG_FILEPATH,
+    CONFIG_TEMPLATE_PATH,
+    CONTEXT_SETTINGS,
+    appdirs,
 )
-from duplicity_backup_s3.utils import echo_info, echo_failure, echo_success, run_as_root
+from duplicity_backup_s3.utils import echo_failure, echo_info, echo_success, run_as_root
 
 
 @click.command(context_settings=CONTEXT_SETTINGS)
@@ -25,37 +25,25 @@ from duplicity_backup_s3.utils import echo_info, echo_failure, echo_success, run
     default=CONFIG_FILEPATH,
 )
 @click.option("-v", "--verbose", is_flag=True, help="Be more verbose", default=False)
+@click.option(
+    "-q",
+    "--quiet",
+    is_flag=True,
+    help="Non interactive - be quiet - don't ask questions and create an empty "
+    "configfile here in the current directory.",
+    default=False,
+)
 def init(**options):
     """Initialise an empty configuration file."""
-    config_path_options = [
-        ("1. Current directory", Path.cwd()),
-        ("2. User configuration directory", Path(appdirs.user_config_dir)),
-        (
-            "3. System configuration directory (only root)",
-            Path(appdirs.site_config_dir),
-        ),
-    ]
+    # Early bailout when `quiet` flag is set
+    if options.get("quiet"):
+        import shutil
 
-    echo_info("Choose the path of the configuration file:")
-    echo_info("\n".join(["{0} ({1})".format(*o) for o in config_path_options]))
-    choice = int(click.prompt("Path", default=1, type=click.Choice(["1", "2", "3"])))
-    _, config_path = config_path_options[choice - 1]
-    echo_success("you choose: {}".format(config_path))
-
-    # when choosing root, ensure you run as root
-    if choice == 3 and not run_as_root():
-        echo_failure(
-            "You need to run this command again with `sudo` rights to manage "
-            "the system wide configuration."
-        )
-        sys.exit(1)
-
-    # when choosing current dir, let user also choose the name of the config file.
-    config_filename = CONFIG_FILENAME
-    if choice == 1:
-        config_filename = click.prompt(
-            "Filename of the configuration file", default=CONFIG_FILENAME
-        )
+        shutil.copy(CONFIG_TEMPLATE_PATH, Path(Path.cwd() / CONFIG_FILENAME))
+        config = check_config_file(Path(Path.cwd() / CONFIG_FILENAME), exit=True)
+        if options.get("verbose"):
+            echo_info("Initialising an empty config file in: '{}'".format(config))
+        return 0
 
     config_path_options = [
         ("1. Current directory", Path.cwd()),

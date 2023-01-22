@@ -10,38 +10,46 @@ jobs:
       max-parallel: 5
       fail-fast: False
       matrix:
-        python-version: [3.5, 3.6, 3.7, 3.8, 3.9, pypy3]
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+        # python-version: ["3.9"]
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
-      with:
-        python-version: ${{ matrix.python-version }}
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    - name: Install OS dependencies
-      run: |
-        sudo apt-get install duplicity --yes
+      - name: Install OS dependencies
+        run: |
+          sudo apt-get install duplicity --yes -q
 
-    - name: Install basic dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -U setuptools>=38.6.0 wheel>=0.31.0
-        pip install -r requirements.txt -r requirements_dev.txt
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install --quiet flake8 pytest
+          pip install --quiet -r requirements.txt -r requirements_dev.txt
 
-    - name: Perform Testing
-      run: |
-        python setup.py --quiet clean develop
-        python setup.py test
+      - name: Lint with flake8
+        run: |
+          # stop the build if there are Python syntax errors or undefined names
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-    - name: Check docs and distribution
-      if: matrix.python-version == 3.8
-      run: |
-        pip install flake8 pydocstyle check-manifest
+      - name: Test
+        run: |
+          python setup.py --quiet clean develop
+          python setup.py test
 
-        flake8 duplicity_backup_s3 --count --show-source --statistics
-        pydocstyle duplicity_backup_s3
-        check-manifest
-        python setup.py check -m -s
-        python setup.py bdist_wheel --universal
-        twine check dist/*
+      - name: Check docs and distribution
+        if: matrix.python-version == 3.9
+        run: |
+          pip install --quiet flake8 pydocstyle check-manifest wheel
+
+          # flake8 duplicity_backup_s3 --count --show-source --statistics
+          pydocstyle duplicity_backup_s3
+
+          check-manifest
+          python setup.py bdist_wheel --universal
+          twine check dist/*

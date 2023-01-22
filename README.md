@@ -150,14 +150,29 @@ You can alter the crontab in the following way
 #----------- minute in the hour
 ```
 
+## Custom Endpoints
+
+You can configure custom endpoint and custom additional arguments in the configuration yaml file. The custom endpoint can be configured in the section `remote > uri` and the additional arguments that are directly passed to duplicity can be configurated in the `extra_args` section as a list in the yaml file.
+
+```yaml
+...
+remote:
+    uri: "s3://ams3.digitaloceanspaces.com/bucketname/subpath"
+extra_args:
+    - --some
+    - --additional
+    - --arguments
+    - --here=3
+```
+
 ## TODO
 
 - [x] implement appdirs for default configuration file placement
 - [x] implement restore for restoring
-- [ ] test on digitalocean
+- [x] Allow for custom s3 storage endpoints. Included in v1.2.0 with thanks to @denismatveev
 - [x] If requested migrate `--s3-european-buckets` to configuration file
-- [ ] If requested implement GPG/Encryption capabilities. Possibly reusing code of `kecpkg-tools` to manage certificates.
-- [ ] Initialise itself into `cron.daily`
+- [x] If requested implement GPG/Encryption capabilities. Possibly reusing code of `kecpkg-tools` to manage certificates. Included in v1.2.0 with thanks at @denismatveev
+
 
 ## Credits
 
