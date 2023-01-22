@@ -189,7 +189,6 @@ class DuplicityS3:
         # check if endpoint has a scheme in it. If not prepend s3://
         scheme = urlsplit(target_uri).scheme
         if not scheme:
-            print(urlsplit(target_uri))
             target_uri = f"s3://{target_uri}"
 
         return target_uri
