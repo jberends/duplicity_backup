@@ -57,13 +57,15 @@ class TestNonCLI(TestCase):
 
 class TestDuplicityS3Klass(TestCase):
     def setUp(self) -> None:
-        self.base_config = dict(
-            dict(remote=dict(bucket="foo", path="foo", endpoint="s3://"))
-        )
         self.dupe = DuplicityS3()
 
     def test_duplicity_remote_uri_property(self):
-        """Testing the DuplicityS3.remote_uri property with different settings."""
+        """
+        Testing the DuplicityS3.remote_uri property with different settings.
+
+        The URIs are retrieved from the duplicity `--help` command from
+        duplicity versions 1.2.1 and 0.7.19. The 0.7.19 is included in centos7.
+        """
 
         # triple with endpoint, bucket, path, (optional FULL url to check against)
         endpoint_pass = {
@@ -113,6 +115,8 @@ class TestDuplicityS3Klass(TestCase):
                 "/prefix",
                 "s3://host/bucket_name/prefix",  # full uri
             ),
+            (None, "bucket", "path", "s3+http://bucket/path"),
+            ("host", None, "path", "s3://host/path")
         }
 
         def _construct_config(triple: tuple) -> dict:
@@ -125,9 +129,6 @@ class TestDuplicityS3Klass(TestCase):
                     )
                 )
             )
-
-        self.dupe._config = self.base_config
-        self.assertTrue(self.dupe.remote_uri)
 
         for triple in endpoint_pass:
             if len(triple) == 4:

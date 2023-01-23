@@ -168,9 +168,9 @@ class DuplicityS3:
         if "uri" in self._config["remote"]:
             return remote.get("uri")
 
-        bucket = bucket_str = self._config["remote"].get("bucket")
-        path = path_str = self._config["remote"].get("path")
-        endpoint = endpoint_str = self._config["remote"].get("endpoint")
+        bucket = bucket_str = self._config["remote"].get("bucket") or ""
+        path = path_str = self._config["remote"].get("path") or ""
+        endpoint = endpoint_str = self._config["remote"].get("endpoint") or ""
 
         if endpoint and bucket:
             endpoint_str = f"{endpoint}/" if not endpoint.endswith("/") else endpoint
