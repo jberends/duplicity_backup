@@ -7,8 +7,8 @@ from duplicity_backup_s3.utils import echo_failure, echo_info
 
 
 def check_config_file(
-    config_file: Union[Text, Path],
-    path: Union[Text, Path, None] = None,
+    config_file: Union[str, Path],
+    path: Union[str, Path, None] = None,
     exit=True,
     verbose=False,
     testing=False,
@@ -67,8 +67,8 @@ def check_config_file(
 
 
 def search_config(
-    config_file: Union[Text, Path],
-    path: Union[Text, Path, None] = None,
+    config_file: Union[str, Path],
+    path: Union[str, Path, None] = None,
     exit: bool = True,
 ) -> Union[Path]:
     """
