@@ -1,12 +1,10 @@
-from __future__ import annotations
-
 import os
 import subprocess
 import sys
 import warnings
 from pathlib import Path
 from pprint import pprint
-from typing import List
+from typing import List, Union
 from urllib.parse import urlsplit
 
 import yaml
@@ -134,7 +132,7 @@ class DuplicityS3:
             return dict()
 
     @property
-    def _endpoint_uri(self) -> str | None:
+    def _endpoint_uri(self) -> Union[str,None]:
         """
         The endpoint URI from the configuration.
 
@@ -192,7 +190,7 @@ class DuplicityS3:
 
         return target_uri
 
-    def _extend_args(self, args: list | None = None) -> list:
+    def _extend_args(self, args: Union[list,None] = None) -> list:
         """
         Return extended arguments based on the most common arguments.
 
