@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.2.1 (31JAN23)
+
+* :+1: Reinstating python 3.6 compatibility to ensure make it compativle with older Centos 7/RHEL installations that ship python 3.6.
+
 ## v1.2.0 (23JAN23)
 
 This release is named "The Other S3 As Well"-Release. We now support other S3 storage providers, other than only the Amazon one. So now you can use digitalocean (tested) or even dropbox for that matter as a remote storage for your backups.
