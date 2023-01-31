@@ -21,6 +21,7 @@ from duplicity_backup_s3.defaults import (
 )
 from duplicity_backup_s3.utils import echo_failure, echo_info
 
+
 # /bin/duplicity
 #   -v3
 #   --dry-run

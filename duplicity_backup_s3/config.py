@@ -1,6 +1,6 @@
 import sys
 from pathlib import Path
-from typing import Optional, Text, Union
+from typing import Optional, Union
 
 from duplicity_backup_s3.defaults import CONFIG_SCHEMA_PATH, appdirs
 from duplicity_backup_s3.utils import echo_failure, echo_info

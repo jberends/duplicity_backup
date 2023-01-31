@@ -1,6 +1,5 @@
 import os
 from contextlib import contextmanager
-from typing import Text
 
 import click
 
