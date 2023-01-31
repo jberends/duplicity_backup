@@ -1,12 +1,10 @@
-from __future__ import annotations
-
 import os
 import subprocess
 import sys
 import warnings
 from pathlib import Path
 from pprint import pprint
-from typing import List
+from typing import List, Tuple, Union
 from urllib.parse import urlsplit
 
 import yaml
@@ -22,6 +20,7 @@ from duplicity_backup_s3.defaults import (
     NEED_SUBPROCESS_SHELL,
 )
 from duplicity_backup_s3.utils import echo_failure, echo_info
+
 
 # /bin/duplicity
 #   -v3
@@ -134,7 +133,7 @@ class DuplicityS3:
             return dict()
 
     @property
-    def _endpoint_uri(self) -> str | None:
+    def _endpoint_uri(self) -> Union[str, None]:
         """
         The endpoint URI from the configuration.
 
@@ -192,7 +191,7 @@ class DuplicityS3:
 
         return target_uri
 
-    def _extend_args(self, args: list | None = None) -> list:
+    def _extend_args(self, args: Union[List, None] = None) -> List:
         """
         Return extended arguments based on the most common arguments.
 
@@ -201,7 +200,7 @@ class DuplicityS3:
 
         :return: A list of arguments to add
         """
-        if args is None or not isinstance(args, (list, tuple)):
+        if args is None or not isinstance(args, (List, Tuple)):
             args = self._args
         # TODO: not supported in older style duplicity (version 0.7.19 not) need
         #  to refactor to make this version dependend as the new s3:// url
@@ -279,7 +278,7 @@ class DuplicityS3:
         return duplicity_cmd
 
     @staticmethod
-    def get_cludes(includes: list[str] = None, excludes: list[str] = None) -> list[str]:
+    def get_cludes(includes: List[str] = None, excludes: List[str] = None) -> List[str]:
         """
         Get includes or excludes command arguments.
 

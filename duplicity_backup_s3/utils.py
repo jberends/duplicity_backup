@@ -1,11 +1,10 @@
 import os
 from contextlib import contextmanager
-from typing import Text
 
 import click
 
 
-def echo_success(text: Text, nl: bool = True) -> None:
+def echo_success(text: str, nl: bool = True) -> None:
     """
     Write to the console as a success (Cyan bold).
 
@@ -15,7 +14,7 @@ def echo_success(text: Text, nl: bool = True) -> None:
     click.secho(text, fg="cyan", bold=True, nl=nl)
 
 
-def echo_failure(text: Text, nl: bool = True) -> None:
+def echo_failure(text: str, nl: bool = True) -> None:
     """
     Write to the console as a failure (Red bold).
 
@@ -25,7 +24,7 @@ def echo_failure(text: Text, nl: bool = True) -> None:
     click.secho(text, fg="red", bold=True, nl=nl)
 
 
-def echo_warning(text: Text, nl: bool = True) -> None:
+def echo_warning(text: str, nl: bool = True) -> None:
     """
     Write to the console as a warning (Yellow bold).
 
@@ -35,7 +34,7 @@ def echo_warning(text: Text, nl: bool = True) -> None:
     click.secho(text, fg="yellow", bold=True, nl=nl)
 
 
-def echo_waiting(text: Text, nl: bool = True) -> None:
+def echo_waiting(text: str, nl: bool = True) -> None:
     """
     Write to the console as a waiting (Magenta bold).
 
@@ -45,7 +44,7 @@ def echo_waiting(text: Text, nl: bool = True) -> None:
     click.secho(text, fg="magenta", bold=True, nl=nl)
 
 
-def echo_info(text: Text, nl=True):
+def echo_info(text: str, nl=True):
     """
     Write to the console as a informational (bold).
 

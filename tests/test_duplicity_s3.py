@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 """Tests for `duplicity_backup_s3` package."""
 from pathlib import Path
@@ -20,7 +19,7 @@ class TestDuplicity_s3(TestSetup):
         self.assertIn(
             "--help",
             result.output,
-            "Results of the run were: \n---\n{}\n---".format(result.output),
+            f"Results of the run were: \n---\n{result.output}\n---",
         )
         self.assertIn("Show this message and exit.", result.output)
 
@@ -29,7 +28,7 @@ class TestDuplicity_s3(TestSetup):
         self.assertEqual(
             result.exit_code,
             0,
-            "Results of the run were: \n---\n{}\n---".format(result.output),
+            f"Results of the run were: \n---\n{result.output}\n---",
         )
         self.assertIn(__version__, result.output)
 

@@ -1,14 +1,14 @@
 import sys
 from pathlib import Path
-from typing import Optional, Text, Union
+from typing import Optional, Union
 
 from duplicity_backup_s3.defaults import CONFIG_SCHEMA_PATH, appdirs
 from duplicity_backup_s3.utils import echo_failure, echo_info
 
 
 def check_config_file(
-    config_file: Union[Text, Path],
-    path: Union[Text, Path, None] = None,
+    config_file: Union[str, Path],
+    path: Union[str, Path, None] = None,
     exit=True,
     verbose=False,
     testing=False,
@@ -67,8 +67,8 @@ def check_config_file(
 
 
 def search_config(
-    config_file: Union[Text, Path],
-    path: Union[Text, Path, None] = None,
+    config_file: Union[str, Path],
+    path: Union[str, Path, None] = None,
     exit: bool = True,
 ) -> Union[Path]:
     """

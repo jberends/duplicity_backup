@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import click
 
 from duplicity_backup_s3 import __version__

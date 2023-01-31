@@ -42,7 +42,7 @@ def init(**options):
         shutil.copy(CONFIG_TEMPLATE_PATH, Path(Path.cwd() / CONFIG_FILENAME))
         config = check_config_file(Path(Path.cwd() / CONFIG_FILENAME), exit=True)
         if options.get("verbose"):
-            echo_info("Initialising an empty config file in: '{}'".format(config))
+            echo_info(f"Initialising an empty config file in: '{config}'")
         return 0
 
     config_path_options = [
@@ -55,10 +55,10 @@ def init(**options):
     ]
 
     echo_info("Choose the path of the configuration file:")
-    echo_info("\n".join(["{0} ({1})".format(*o) for o in config_path_options]))
+    echo_info("\n".join(["{} ({})".format(*o) for o in config_path_options]))
     choice = int(click.prompt("Path", default=1, type=click.Choice(["1", "2", "3"])))
     _, config_path = config_path_options[choice - 1]
-    echo_success("you choose: {}".format(config_path))
+    echo_success(f"you choose: {config_path}")
 
     # when choosing root, ensure you run as root
     if choice == 3 and not run_as_root():
@@ -88,7 +88,7 @@ def init(**options):
 
     if config.exists():
         echo_info("Backing up old config file.")
-        deprecated_config_filename = Path("{}.backup".format(config.name))
+        deprecated_config_filename = Path(f"{config.name}.backup")
         config.replace(deprecated_config_filename)
 
     with CONFIG_TEMPLATE_PATH.open() as f:
@@ -122,7 +122,7 @@ def init(**options):
 
     # write config to disk
     with config.open("w") as fd:
-        echo_info("Initialising an empty config file in: '{}'".format(config))
+        echo_info(f"Initialising an empty config file in: '{config}'")
         fd.write(yaml.dump(default_config))
 
     if config.exists():
