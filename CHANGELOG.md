@@ -2,7 +2,7 @@
 
 ## v1.2.1 (31JAN23)
 
-* :+1: Reinstating python 3.6 compatibility to ensure make it compativle with older Centos 7/RHEL installations that ship python 3.6.
+* :+1: Reinstating python 3.6 compatibility to ensure make it compatible with older Centos 7/RHEL installations that ship python 3.6.
 
 ## v1.2.0 (23JAN23)
 
