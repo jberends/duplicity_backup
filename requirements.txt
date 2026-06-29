@@ -1,4 +1,4 @@
-Click>=7.0
+Click>=8.4.2
 PyYAML
 envparse
 cerberus
